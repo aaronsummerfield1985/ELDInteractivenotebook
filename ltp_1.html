@@ -186,7 +186,25 @@
 
         .transcript-card { background: #f8fafc; border-left: 4px solid var(--primary); padding: 12px; font-size: 0.85rem; font-style: italic; color: #475569; max-height: 180px; overflow-y: auto; }
 
-        .keyword-underline { display: block; padding: 5px 0; border-bottom: 1px solid #f1f5f9; font-weight: 500; font-size: 0.95rem; }
+        /* --- KEYWORD ROW --- */
+        .keyword-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 4px;
+        }
+        .keyword-sentence {
+            flex: 1;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #334155;
+        }
+        .keyword-box {
+            min-width: 250px;
+            margin: 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -508,15 +526,36 @@
             <div class="slide-accent"></div>
             <div class="slide-header"><p>Lesson Three</p><h2>Open the Lesson</h2></div>
             <div class="content">
-                <p>Underline (Click) the keywords that tell you these are <strong>global listening</strong> questions:</p>
-                <div style="margin-top:15px;">
-                    <span class="keyword-underline">What is the <u>main topic</u> of the presentation?</span>
-                    <span class="keyword-underline">What is the passage <u>mostly about</u>?</span>
-                    <span class="keyword-underline">What topic are the students <u>discussing</u>?</span>
-                    <span class="keyword-underline">What is the <u>central idea</u> of the lecture?</span>
-                    <span class="keyword-underline">Which argument is the <u>most important</u>?</span>
-                    <span class="keyword-underline">What are the speaker's <u>feelings</u> about the topic?</span>
-                    <span class="keyword-underline">What is the <u>message</u> of the passage?</span>
+                <p>Identify the keywords that tell you these are <strong>global listening</strong> questions:</p>
+                <div style="margin-top:15px; display: flex; flex-direction: column; gap: 10px;">
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What is the main topic of the presentation?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-1" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What is the passage mostly about?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-2" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What topic are the students discussing?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-3" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What is the central idea of the lecture?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-4" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">Which argument is the most important?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-5" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What are the speaker's feelings about the topic?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-6" data-placeholder="Keywords..."></div>
+                    </div>
+                    <div class="keyword-row">
+                        <span class="keyword-sentence">What is the message of the passage?</span>
+                        <div class="response-box keyword-box" contenteditable="true" data-id="kw-entry-7" data-placeholder="Keywords..."></div>
+                    </div>
                 </div>
                 <div class="info-card" style="margin-top:20px; border-left: 5px solid var(--secondary);">
                     <p><strong>Thought Bubble:</strong> Why is it helpful to be able to call out keywords?</p>
@@ -1053,7 +1092,7 @@
         }
 
         function toggleSelect(element, group) {
-            const container = element.closest('.image-selection');
+            const container = element.closest('.image-selection') || element.parentElement;
             container.querySelectorAll('.image-item').forEach(item => item.classList.remove('selected'));
             element.classList.add('selected'); saveState();
         }
