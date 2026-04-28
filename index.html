@@ -15,25 +15,14 @@
         .border-eld { border-color: var(--eld-green); }
         .hover-bg-eld:hover { background-color: var(--eld-dark); }
         
-        /* Custom scrollbar for a cleaner look */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--eld-green);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--eld-green); }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-800">
 
-    <!-- Header Section -->
     <header class="bg-white border-b-4 border-eld shadow-sm sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -42,12 +31,12 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-slate-900">Systematic ELD Portal</h1>
-                    <p class="text-sm text-slate-500 font-medium italic">Interactive Notebook Resources</p>
+                    <p class="text-sm text-slate-500 font-medium italic">Section Navigation Dashboard</p>
                 </div>
             </div>
             
             <div class="relative w-full md:w-64">
-                <input type="text" id="lessonSearch" placeholder="Search lessons..." 
+                <input type="text" id="sectionSearch" placeholder="Search sections..." 
                     class="w-full pl-10 pr-4 py-2 rounded-full border border-slate-200 focus:outline-none focus:ring-2 focus:ring-eld focus:border-transparent transition-all">
                 <svg class="w-5 h-5 absolute left-3 top-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -57,70 +46,27 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-10">
-        <!-- Dashboard Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <!-- Workbook 1: Writing to a Prompt -->
-            <section class="workbook-section" data-title="Writing to a Prompt">
+            <!-- Workbook 1 -->
+            <section class="workbook-section">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 bg-slate-50/50">
                         <span class="inline-block px-3 py-1 rounded-full bg-eld/10 text-eld text-xs font-bold uppercase tracking-wider mb-2">Unit Four</span>
                         <h2 class="text-xl font-bold text-slate-900">Writing to a Prompt</h2>
                     </div>
-                    
-                    <div class="p-6 space-y-8">
-                        <!-- Section One -->
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-eld"></span> Section One
-                            </h3>
-                            <div class="grid gap-2" id="w1-s1"></div>
-                        </div>
-
-                        <!-- Section Two -->
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-eld"></span> Section Two
-                            </h3>
-                            <div class="grid gap-2" id="w1-s2"></div>
-                        </div>
-
-                        <!-- Section Three -->
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-eld"></span> Section Three
-                            </h3>
-                            <div class="grid gap-2" id="w1-s3"></div>
-                        </div>
-                    </div>
+                    <div class="p-6 space-y-4" id="w1-sections"></div>
                 </div>
             </section>
 
-            <!-- Workbook 2: Listening & Speaking -->
-            <section class="workbook-section" data-title="Listening and Speaking to a Prompt">
+            <!-- Workbook 2 -->
+            <section class="workbook-section">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 bg-slate-50/50">
                         <span class="inline-block px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase tracking-wider mb-2">Secondary ELD Course 2</span>
                         <h2 class="text-xl font-bold text-slate-900">Listening and Speaking to a Prompt</h2>
                     </div>
-                    
-                    <div class="p-6 space-y-8">
-                        <!-- Section One -->
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-orange-500"></span> Section One
-                            </h3>
-                            <div class="grid gap-2" id="w2-s1"></div>
-                        </div>
-
-                        <!-- Section Two -->
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-orange-500"></span> Section Two
-                            </h3>
-                            <div class="grid gap-2" id="w2-s2"></div>
-                        </div>
-                    </div>
+                    <div class="p-6 space-y-4" id="w2-sections"></div>
                 </div>
             </section>
 
@@ -134,102 +80,60 @@
     <script>
         const workbookData = {
             writing: [
-                { section: 1, lessons: [
-                    { name: "Lesson One", page: 2, id: 1 },
-                    { name: "Lesson Two", page: 5, id: 2 },
-                    { name: "Lesson Three", page: 10, id: 3 },
-                    { name: "Lesson Four", page: 13, id: 4 },
-                    { name: "Lesson Five", page: 14, id: 5 }
-                ]},
-                { section: 2, lessons: [
-                    { name: "Lesson One", page: 18, id: 1 },
-                    { name: "Lesson Two", page: 23, id: 2 },
-                    { name: "Lesson Three", page: 27, id: 3 },
-                    { name: "Lesson Four", page: 28, id: 4 }
-                ]},
-                { section: 3, lessons: [
-                    { name: "Lesson One", page: 33, id: 1 },
-                    { name: "Lesson Two", page: 38, id: 2 },
-                    { name: "Lesson Three", page: 42, id: 3 },
-                    { name: "Lesson Four", page: 46, id: 4 },
-                    { name: "Lesson Five", page: 49, id: 5 },
-                    { name: "Lesson Six", page: 50, id: 6 }
-                ]}
+                { id: 1, title: "Section One", range: "pp. 2-17", lessons: ["Lesson One", "Lesson Two", "Lesson Three", "Lesson Four", "Lesson Five"] },
+                { id: 2, title: "Section Two", range: "pp. 18-32", lessons: ["Lesson One", "Lesson Two", "Lesson Three", "Lesson Four"] },
+                { id: 3, title: "Section Three", range: "pp. 33-50", lessons: ["Lesson One", "Lesson Two", "Lesson Three", "Lesson Four", "Lesson Five", "Lesson Six"] }
             ],
             speaking: [
-                { section: 1, lessons: [
-                    { name: "Lesson One", page: 4, id: 1 },
-                    { name: "Lesson Two", page: 6, id: 2 },
-                    { name: "Lesson Three", page: 12, id: 3 },
-                    { name: "Lesson Four", page: 17, id: 4 },
-                    { name: "Lesson Five", page: 21, id: 5 }
-                ]},
-                { section: 2, lessons: [
-                    { name: "Lesson One", page: 26, id: 1 },
-                    { name: "Lesson Two", page: 30, id: 2 },
-                    { name: "Lesson Three", page: 33, id: 3 },
-                    { name: "Lesson Four", page: 36, id: 4 },
-                    { name: "Lesson Five", page: 39, id: 5 },
-                    { name: "Lesson Six", page: 42, id: 6 }
-                ]}
+                { id: 1, title: "Section One", range: "pp. 4-25", lessons: ["Lesson One", "Lesson Two", "Lesson Three", "Lesson Four", "Lesson Five"] },
+                { id: 2, title: "Section Two", range: "pp. 26-42", lessons: ["Lesson One", "Lesson Two", "Lesson Three", "Lesson Four", "Lesson Five", "Lesson Six"] }
             ]
         };
 
-        function createLessonLink(lesson, colorClass, prefix) {
-            const fileName = `${prefix}_${lesson.id}.html`;
+        function createSectionCard(section, colorClass, prefix) {
+            const fileName = `${prefix}_${section.id}.html`;
             const a = document.createElement('a');
             a.href = fileName;
-            a.className = `lesson-card group flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-${colorClass}-200 hover:bg-${colorClass}-50/50 transition-all no-underline`;
+            a.className = `section-card group block p-5 rounded-2xl border border-slate-100 hover:border-${colorClass}-200 hover:bg-${colorClass}-50/30 transition-all no-underline`;
             
             a.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:text-${colorClass}-600 group-hover:border-${colorClass}-200 transition-colors">
-                        ${lesson.page}
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800 group-hover:text-${colorClass}-700 transition-colors">${section.title}</h3>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-tight">${section.range}</span>
                     </div>
-                    <span class="font-medium text-slate-700 group-hover:text-slate-900">${lesson.name}</span>
+                    <div class="flex flex-col items-end gap-1">
+                        <span class="text-[10px] font-mono text-slate-300 group-hover:text-${colorClass}-400 transition-colors font-bold">${fileName}</span>
+                        <div class="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-${colorClass}-400 group-hover:bg-${colorClass}-500 group-hover:text-white transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-mono text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">${fileName}</span>
-                    <svg class="w-4 h-4 text-slate-300 group-hover:text-${colorClass}-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7"></path>
-                    </svg>
+                <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-50">
+                    ${section.lessons.map(l => `<span class="text-[11px] px-2 py-0.5 bg-white border border-slate-100 text-slate-500 rounded-md">${l}</span>`).join('')}
                 </div>
             `;
             return a;
         }
 
         function renderAll() {
-            // Render Writing to a Prompt
+            const w1Container = document.getElementById('w1-sections');
             workbookData.writing.forEach(sec => {
-                const container = document.getElementById(`w1-s${sec.section}`);
-                sec.lessons.forEach(lesson => {
-                    // Using wtp_X.html naming convention
-                    container.appendChild(createLessonLink(lesson, 'green', 'wtp'));
-                });
+                w1Container.appendChild(createSectionCard(sec, 'green', 'wtp'));
             });
 
-            // Render Listening & Speaking
+            const w2Container = document.getElementById('w2-sections');
             workbookData.speaking.forEach(sec => {
-                const container = document.getElementById(`w2-s${sec.section}`);
-                sec.lessons.forEach(lesson => {
-                    // Using ltp_X.html naming convention
-                    container.appendChild(createLessonLink(lesson, 'orange', 'ltp'));
-                });
+                w2Container.appendChild(createSectionCard(sec, 'orange', 'ltp'));
             });
         }
 
-        // Search Functionality
-        document.getElementById('lessonSearch').addEventListener('input', (e) => {
+        document.getElementById('sectionSearch').addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.lesson-card');
-            
-            cards.forEach(card => {
-                const text = card.textContent.toLowerCase();
-                if (text.includes(term)) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
+            document.querySelectorAll('.section-card').forEach(card => {
+                card.style.display = card.textContent.toLowerCase().includes(term) ? 'block' : 'none';
             });
         });
 
