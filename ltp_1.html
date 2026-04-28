@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EL Achieve - Interactive ELD Notebook</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #fbbf24;
+            --bg-page: #f3f4f6;
+            --bg-slide: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-box: #d1d5db;
+            --slide-width: 1120px; /* Scaled 16:9 for readability */
+            --slide-height: 630px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* --- PRINT CSS --- */
+        @media print {
+            .ui-element, #export-btn, .nav-indicator, audio, .audio-placeholder {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+            }
+            .slide {
+                margin: 0 !important;
+                box-shadow: none !important;
+                page-break-after: always;
+                border: 1px solid #eee;
+            }
+            .response-box {
+                border: 1px solid #ccc !important;
+                background: #fdfdfd !important;
+            }
+        }
+
+        /* --- UI ELEMENTS --- */
+        #export-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        #export-btn:hover {
+            transform: scale(1.05);
+            background: #1d4ed8;
+        }
+
+        .nav-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        /* --- SLIDE STRUCTURE --- */
+        .slide-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            gap: 40px;
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--bg-slide);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            padding: 40px;
+        }
+
+        .slide-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .slide-header {
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 12px;
+        }
+
+        .slide-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-header p {
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* --- INPUT ELEMENTS --- */
+        .response-box {
+            border: 2px dashed var(--border-box);
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 40px;
+            margin: 10px 0;
+            background: #fafafa;
+            transition: all 0.2s;
+            outline: none;
+            color: #374151;
+        }
+
+        .response-box:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .response-box:empty::before {
+            content: attr(data-placeholder);
+            color: #9ca3af;
+            font-style: italic;
+        }
+
+        .response-box.has-content {
+            border-style: solid;
+            background: #f0f7ff;
+            border-color: #bfdbfe;
+        }
+
+        /* --- COMPONENTS --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .audio-placeholder {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .audio-icon {
+            font-size: 24px;
+        }
+
+        .mcq-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .mcq-option:hover {
+            background: #f9fafb;
+        }
+
+        .mcq-option input {
+            cursor: pointer;
+        }
+
+        .image-selection {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-item {
+            border: 3px solid transparent;
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            background: #f9fafb;
+        }
+
+        .image-item img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .image-item.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .badge {
+            background: var(--secondary);
+            color: #92400e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="export-btn" onclick="window.print()">Export to PDF</button>
+    <div class="nav-indicator" id="nav-indicator">Slide 1 of 12</div>
+
+    <div class="slide-container" id="container">
+        
+        <!-- SLIDE 1: INTRO -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Section One, Lesson One</p>
+                <h2>Welcome to Listening Skills</h2>
+            </div>
+            <div class="content">
+                <p class="instruction">Objective: Build a shared understanding of why listening is an important skill and what global and local listening mean.</p>
+                
+                <div style="margin-top: 30px;">
+                    <h3>Open the Lesson</h3>
+                    <p>What do you know about ELD testing? What is the name of the test in your state?</p>
+                    <div class="response-box" contenteditable="true" data-id="s1-q1" data-placeholder="Click to type your response..."></div>
+                    
+                    <p style="margin-top:20px;">If you have taken it before, what do you know? If not, what do you expect?</p>
+                    <div class="response-box" contenteditable="true" data-id="s1-q2" data-placeholder="Click to type your response..."></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: NOTE TAKING PRACTICE -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson One</p>
+                <h2>Teach and Practice: Part I</h2>
+            </div>
+            <div class="content">
+                <div class="badge">LISTENING TASK</div>
+                <p>Listen to an article about the importance of listening skills. Take notes to be ready to discuss what you learned.</p>
+                
+                <div class="audio-placeholder ui-element">
+                    <span class="audio-icon">🎧</span>
+                    <div style="flex-grow:1">
+                        <div style="height:4px; background:#e2e8f0; border-radius:2px;"></div>
+                    </div>
+                    <span>0:00 / 2:15</span>
+                </div>
+
+                <h3>Notes:</h3>
+                <div class="response-box" contenteditable="true" data-id="s2-notes" data-placeholder="Type your notes here as you listen..." style="min-height: 250px;"></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: DEFINITIONS -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson One</p>
+                <h2>Local vs Global Listening</h2>
+            </div>
+            <div class="content">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Local Listening</h3>
+                        <p class="text-muted">Focusing on specific details and key points within a passage.</p>
+                        <div class="response-box" contenteditable="true" data-id="def-local" data-placeholder="Our definition of local listening is..."></div>
+                    </div>
+                    <div class="card">
+                        <h3>Global Listening</h3>
+                        <p class="text-muted">Understanding big ideas, summaries, inferences, and opinions.</p>
+                        <div class="response-box" contenteditable="true" data-id="def-global" data-placeholder="Our definition of global listening is..."></div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top:20px;">Examples:</h3>
+                <div class="grid">
+                    <div class="response-box" contenteditable="true" data-id="ex-local" data-placeholder="Example of local listening..."></div>
+                    <div class="response-box" contenteditable="true" data-id="ex-global" data-placeholder="Example of global listening..."></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: LESSON TWO - PREPARING -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Section One, Lesson Two</p>
+                <h2>Preparing to Do Your Best</h2>
+            </div>
+            <div class="content">
+                <p>Being prepared is one way to ensure success. What works for you to feel calm, alert, and prepared?</p>
+                <p>Write three things you do to prepare for a big test:</p>
+                <div class="response-box" contenteditable="true" data-id="s4-p1" data-placeholder="1. e.g., get enough sleep"></div>
+                <div class="response-box" contenteditable="true" data-id="s4-p2" data-placeholder="2. e.g., eat breakfast"></div>
+                <div class="response-box" contenteditable="true" data-id="s4-p3" data-placeholder="3. e.g., take deep breaths"></div>
+                
+                <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1;">Sleep</span>
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1;">Breakfast</span>
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1;">Stretch</span>
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1;">Walk</span>
+                    <span class="badge" style="background:#e0f2fe; color:#0369a1;">Alarm</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: IMAGE SELECTION -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson Two</p>
+                <h2>Visual Listening Task</h2>
+            </div>
+            <div class="content">
+                <p>Listen to the sentence and circle (click) the picture that matches what you hear.</p>
+                <div class="image-selection">
+                    <div class="image-item" onclick="toggleSelect(this)" data-id="img-1">
+                        <div style="height:100px; background:#ddd; display:flex; align-items:center; justify-content:center;">A (Fishbowl A)</div>
+                        <p>Detailed Scene</p>
+                    </div>
+                    <div class="image-item" onclick="toggleSelect(this)" data-id="img-2">
+                        <div style="height:100px; background:#ddd; display:flex; align-items:center; justify-content:center;">B (Fishbowl B)</div>
+                        <p>Simple Scene</p>
+                    </div>
+                    <div class="image-item" onclick="toggleSelect(this)" data-id="img-3">
+                        <div style="height:100px; background:#ddd; display:flex; align-items:center; justify-content:center;">C (Fishbowl C)</div>
+                        <p>Different Object</p>
+                    </div>
+                </div>
+                <div class="response-box" contenteditable="true" data-id="img-task-notes" data-placeholder="Notes about what you heard..."></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: PASSAGE QUESTIONS (PRINCESS BRIDE) -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson Two</p>
+                <h2>Movie Summary: Passage 1</h2>
+            </div>
+            <div class="content">
+                <p>Question 4: What year did the movie "The Princess Bride" come out?</p>
+                <div class="mcq-container">
+                    <label class="mcq-option"><input type="radio" name="q4" data-id="q4-a"> 1992</label>
+                    <label class="mcq-option"><input type="radio" name="q4" data-id="q4-b"> 1985</label>
+                    <label class="mcq-option"><input type="radio" name="q4" data-id="q4-c"> 1987</label>
+                    <label class="mcq-option"><input type="radio" name="q4" data-id="q4-d"> 1990</label>
+                </div>
+
+                <p style="margin-top:20px;">Question 5: What word was NOT used to describe the movie's genre?</p>
+                <div class="mcq-container">
+                    <label class="mcq-option"><input type="radio" name="q5" data-id="q5-a"> fantasy</label>
+                    <label class="mcq-option"><input type="radio" name="q5" data-id="q5-b"> adventure</label>
+                    <label class="mcq-option"><input type="radio" name="q5" data-id="q5-c"> comedy</label>
+                    <label class="mcq-option"><input type="radio" name="q5" data-id="q5-d"> scary</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: LESSON THREE - KEYWORDS -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Section One, Lesson Three</p>
+                <h2>Global Listening Keywords</h2>
+            </div>
+            <div class="content">
+                <p>Identify and underline keywords that signal a "Global Listening" question.</p>
+                <div class="grid">
+                    <div class="response-box" contenteditable="true" data-id="kw-1">What is the MAIN TOPIC?</div>
+                    <div class="response-box" contenteditable="true" data-id="kw-2">What is the passage MOSTLY ABOUT?</div>
+                    <div class="response-box" contenteditable="true" data-id="kw-3">What is the CENTRAL IDEA?</div>
+                    <div class="response-box" contenteditable="true" data-id="kw-4">What is the MESSAGE of the passage?</div>
+                </div>
+                <p style="margin-top:20px;">Why is it helpful to be able to identify these keywords quickly?</p>
+                <div class="response-box" contenteditable="true" data-id="s7-q" data-placeholder="Click to type..."></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: METEOR IMPACT PRESENTATION -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson Three</p>
+                <h2>Student Presentation: Meteor Crash</h2>
+            </div>
+            <div class="content">
+                <div class="badge">GLOBAL LISTENING</div>
+                <p>Listen to a student presentation about the impact of a meteor crash 65 million years ago. Take notes on the causes and effects.</p>
+                
+                <div class="grid" style="grid-template-columns: 2fr 1fr;">
+                    <div>
+                        <h3>Notes:</h3>
+                        <div class="response-box" contenteditable="true" data-id="meteor-notes" data-placeholder="Take notes here..." style="min-height: 250px;"></div>
+                    </div>
+                    <div style="background:#fefce8; padding:15px; border-radius:8px;">
+                        <h4>Focus on:</h4>
+                        <ul style="margin-left:20px; font-size:0.9rem;">
+                            <li>Yucatan Peninsula</li>
+                            <li>Photosynthesis</li>
+                            <li>Food Supply Chain</li>
+                            <li>Mammal Evolution</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: GLOBAL COMPETENCE DEBATE -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson Four</p>
+                <h2>The Four Skills of Global Competence</h2>
+            </div>
+            <div class="content">
+                <p>Listen to Elfin and Aya debate about global competencies. Which skill do they argue is most important?</p>
+                <div class="grid">
+                    <div>
+                        <p>1. Which skill does <strong>Elfin</strong> prioritize?</p>
+                        <div class="mcq-container">
+                            <label class="mcq-option"><input type="radio" name="elfin" data-id="el-1"> Investigate the World</label>
+                            <label class="mcq-option"><input type="radio" name="elfin" data-id="el-2"> Take Action</label>
+                        </div>
+                    </div>
+                    <div>
+                        <p>2. Which skill does <strong>Aya</strong> prioritize?</p>
+                        <div class="mcq-container">
+                            <label class="mcq-option"><input type="radio" name="aya" data-id="ay-1"> Recognize Perspectives</label>
+                            <label class="mcq-option"><input type="radio" name="aya" data-id="ay-2"> Communicate Ideas</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="response-box" contenteditable="true" data-id="debate-summary" data-placeholder="What was the final conclusion they agreed on?"></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: CREATE YOUR OWN TEST -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Lesson Five</p>
+                <h2>Teacher Mode: Create a Task</h2>
+            </div>
+            <div class="content">
+                <p>Use the conversation between Aaliyah and Martin to create four multiple-choice questions for a partner.</p>
+                <div class="grid">
+                    <div style="border:1px solid #eee; padding:10px; border-radius:8px;">
+                        <p><strong>Question 1:</strong></p>
+                        <div class="response-box" contenteditable="true" data-id="user-q1" data-placeholder="Type question..."></div>
+                        <div class="response-box" contenteditable="true" data-id="user-q1-a" data-placeholder="Option A"></div>
+                        <div class="response-box" contenteditable="true" data-id="user-q1-b" data-placeholder="Option B"></div>
+                    </div>
+                    <div style="border:1px solid #eee; padding:10px; border-radius:8px;">
+                        <p><strong>Question 2:</strong></p>
+                        <div class="response-box" contenteditable="true" data-id="user-q2" data-placeholder="Type question..."></div>
+                        <div class="response-box" contenteditable="true" data-id="user-q2-a" data-placeholder="Option A"></div>
+                        <div class="response-box" contenteditable="true" data-id="user-q2-b" data-placeholder="Option B"></div>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top:15px; font-weight:bold; color:var(--primary);">Pair up and trade tests!</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: SPEAKING REFLECTION -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Section One</p>
+                <h2>Speaking & Group Feedback</h2>
+            </div>
+            <div class="content">
+                <p>Take turns sharing your responses. Use the "Talking Chips" strategy to provide feedback to your group members.</p>
+                <div class="grid">
+                    <div style="background:#f0f9ff; padding:15px; border-radius:8px;">
+                        <h4>Affirmation</h4>
+                        <p>"I heard you say..."</p>
+                        <div class="response-box" contenteditable="true" data-id="speak-1"></div>
+                    </div>
+                    <div style="background:#fff7ed; padding:15px; border-radius:8px;">
+                        <h4>Suggestion</h4>
+                        <p>"Your response would be stronger if..."</p>
+                        <div class="response-box" contenteditable="true" data-id="speak-2"></div>
+                    </div>
+                </div>
+                <p style="margin-top:20px;">What is one insight you gained from your partners' feedback?</p>
+                <div class="response-box" contenteditable="true" data-id="final-insight"></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: FINAL REFLECTION -->
+        <div class="slide">
+            <div class="slide-accent"></div>
+            <div class="slide-header">
+                <p>Section One Wrap-up</p>
+                <h2>Lesson Reflection</h2>
+            </div>
+            <div class="content">
+                <div class="card">
+                    <p><strong>What was the hardest part about these tasks?</strong></p>
+                    <div class="response-box" contenteditable="true" data-id="ref-hard"></div>
+                </div>
+                <div class="card">
+                    <p><strong>Which part did you feel most confident about?</strong></p>
+                    <div class="response-box" contenteditable="true" data-id="ref-conf"></div>
+                </div>
+                <div class="card">
+                    <p><strong>What is something you want to improve in Section Two?</strong></p>
+                    <div class="response-box" contenteditable="true" data-id="ref-imp"></div>
+                </div>
+                <div style="text-align:center; margin-top:30px; opacity:0.6;">
+                    <p>© 2025 EL Achieve - Interactive Notebook</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Persistence Engine ---
+        function saveState() {
+            const inputs = document.querySelectorAll('.response-box, input[type="radio"]');
+            const state = {};
+            
+            inputs.forEach(input => {
+                const id = input.getAttribute('data-id');
+                if (!id) return;
+
+                if (input.classList.contains('response-box')) {
+                    state[id] = input.innerText;
+                    // Visual feedback for content
+                    if (input.innerText.trim() !== "") {
+                        input.classList.add('has-content');
+                    } else {
+                        input.classList.remove('has-content');
+                    }
+                } else if (input.type === 'radio') {
+                    state[id] = input.checked;
+                }
+            });
+
+            // Image selections
+            const imageItems = document.querySelectorAll('.image-item');
+            imageItems.forEach(item => {
+                const id = item.getAttribute('data-id');
+                state[id] = item.classList.contains('selected');
+            });
+
+            localStorage.setItem('eld_notebook_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('eld_notebook_state');
+            if (!saved) return;
+            const state = JSON.parse(saved);
+
+            Object.keys(state).forEach(id => {
+                const el = document.querySelector(`[data-id="${id}"]`);
+                if (!el) return;
+
+                if (el.classList.contains('response-box')) {
+                    el.innerText = state[id];
+                    if (el.innerText.trim() !== "") el.classList.add('has-content');
+                } else if (el.type === 'radio') {
+                    el.checked = state[id];
+                } else if (el.classList.contains('image-item')) {
+                    if (state[id]) el.classList.add('selected');
+                }
+            });
+        }
+
+        // --- Interaction Logic ---
+        function toggleSelect(element) {
+            // Group logic: find siblings in the same selection group
+            const container = element.parentElement;
+            container.querySelectorAll('.image-item').forEach(item => item.classList.remove('selected'));
+            element.classList.add('selected');
+            saveState();
+        }
+
+        // --- Navigation Logic ---
+        const slides = document.querySelectorAll('.slide');
+        const indicator = document.getElementById('nav-indicator');
+
+        function updateNavigation() {
+            let currentSlide = 1;
+            const scrollPos = window.scrollY + (window.innerHeight / 2);
+
+            slides.forEach((slide, index) => {
+                if (scrollPos > slide.offsetTop) {
+                    currentSlide = index + 1;
+                }
+            });
+
+            indicator.innerText = `Slide ${currentSlide} of ${slides.length}`;
+        }
+
+        // --- Initialization ---
+        window.addEventListener('load', () => {
+            loadState();
+            updateNavigation();
+            
+            // Listen for any text input
+            document.querySelectorAll('.response-box').forEach(box => {
+                box.addEventListener('input', saveState);
+            });
+
+            // Listen for MCQ clicks
+            document.querySelectorAll('input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', saveState);
+            });
+        });
+
+        window.addEventListener('scroll', updateNavigation);
+
+    </script>
+</body>
+</html>
