@@ -46,6 +46,7 @@
             }
             .response-box { border: 1px solid #ccc !important; background: transparent !important; }
             canvas { border: 1px solid #ccc !important; }
+            .visual-asset { border: 1px solid #ddd !important; }
         }
 
         /* --- UI ELEMENTS --- */
@@ -166,6 +167,17 @@
             background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; height: 100%;
         }
 
+        /* --- VISUAL ASSETS --- */
+        .visual-asset {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: #f1f5f9;
+            border-radius: 12px;
+            margin: 10px 0;
+            border: 1px solid #e2e8f0;
+        }
+
         /* --- DRAWING CANVAS STYLES --- */
         .paint-container {
             position: relative;
@@ -216,12 +228,6 @@
             text-align: center; font-weight: 800; font-size: 1.4rem;
         }
         .image-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
-
-        .visual-placeholder {
-            width: 100%; height: 160px; background: #e2e8f0; border: 2px dashed #cbd5e1;
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            color: #64748b; font-weight: 600; text-align: center; padding: 20px; margin: 10px 0;
-        }
 
         .transcript-card {
             background: #fff; border-left: 4px solid var(--primary); padding: 15px;
@@ -323,8 +329,8 @@
                 <div class="response-box" contenteditable="true" data-id="prep-step-1" data-placeholder="1."></div>
                 <div class="response-box" contenteditable="true" data-id="prep-step-2" data-placeholder="2."></div>
                 <div class="response-box" contenteditable="true" data-id="prep-step-3" data-placeholder="3."></div>
-                <div class="visual-placeholder" style="height: 100px;">
-                    IDEAS: Get enough sleep, eat breakfast, positive self-talk, deep breathing.
+                <div class="info-card" style="margin-top:20px; text-align:center; padding: 10px;">
+                    <p style="color:var(--text-muted); font-size: 0.9rem;">IDEAS: Get enough sleep, eat breakfast, positive self-talk, deep breathing.</p>
                 </div>
             </div>
         </div>
@@ -356,9 +362,7 @@
             <div class="content">
                 <div class="badge">LOCAL LISTENING</div>
                 <p>Listen to the description and select the image that matches exactly what you hear.</p>
-                <div class="visual-placeholder">
-                    [ VISUAL REFERENCE: Four panels showing a person sitting in different chairs/positions ]
-                </div>
+                <img src="student at table.png" alt="Visual Reference" class="visual-asset" onerror="this.src='https://placehold.co/800x200?text=Student+at+Table'">
                 <div class="image-selection">
                     <div class="image-item" onclick="toggleSelect(this, 'vis1')" data-id="vis1-a">A</div>
                     <div class="image-item" onclick="toggleSelect(this, 'vis1')" data-id="vis1-b">B</div>
@@ -377,9 +381,7 @@
             <div class="content">
                 <div class="badge">LOCAL LISTENING</div>
                 <p>Select the classroom layout described in the audio clip.</p>
-                <div class="visual-placeholder">
-                    [ VISUAL REFERENCE: Four classroom arrangements (desks, whiteboards, windows) ]
-                </div>
+                <img src="student at computer.png" alt="Classroom Visual" class="visual-asset" onerror="this.src='https://placehold.co/800x200?text=Student+at+Computer'">
                 <div class="image-selection">
                     <div class="image-item" onclick="toggleSelect(this, 'vis2')" data-id="vis2-a">A</div>
                     <div class="image-item" onclick="toggleSelect(this, 'vis2')" data-id="vis2-b">B</div>
@@ -398,9 +400,7 @@
             <div class="content">
                 <div class="badge">LOCAL LISTENING</div>
                 <p>Listen for specific details about the fish and the bowl environment.</p>
-                <div class="visual-placeholder">
-                    [ VISUAL REFERENCE: Four fishbowls with different plants, fish, and gravel colors ]
-                </div>
+                <img src="fishbowls.png" alt="Fishbowls Reference" class="visual-asset" onerror="this.src='https://placehold.co/800x200?text=Fishbowls+Image'">
                 <div class="image-selection">
                     <div class="image-item" onclick="toggleSelect(this, 'vis3')" data-id="vis3-a">A</div>
                     <div class="image-item" onclick="toggleSelect(this, 'vis3')" data-id="vis3-b">B</div>
@@ -482,8 +482,8 @@
                         <div class="badge">TASK: SCIENTIFIC NOTES</div>
                         <div class="response-box" contenteditable="true" data-id="p3-notes" data-placeholder="Notes on adaptations, climate, and species..." style="min-height: 400px;"></div>
                     </div>
-                    <div class="visual-placeholder" style="height: 400px;">
-                        [ BIOME VISUAL: Desert landscape with cacti and camels ]
+                    <div style="text-align:center;">
+                        <img src="Desert biome.png" alt="Desert Biome" class="visual-asset" style="height: 400px;" onerror="this.src='https://placehold.co/400x400?text=Desert+Biome'">
                     </div>
                 </div>
             </div>
@@ -656,8 +656,8 @@
                 <div class="grid-2">
                     <div>
                         <h3>Notes on Ancient Egypt</h3>
-                        <div class="response-box" contenteditable="true" data-id="egypt-notes" style="min-height: 300px;"></div>
-                        <div class="visual-placeholder" style="height: 100px;">[ MAP: Nile & Pyramids ]</div>
+                        <div class="response-box" contenteditable="true" data-id="egypt-notes" style="min-height: 250px;"></div>
+                        <img src="Egyptmap.png" alt="Egypt Map" class="visual-asset" style="height: 150px;" onerror="this.src='https://placehold.co/400x150?text=Egypt+Map'">
                     </div>
                     <div>
                         <h3>Questions 9–11</h3>
@@ -747,8 +747,8 @@
             <div class="slide-header"><p>Lesson Four</p><h2>The Four Skills of Global Competence</h2></div>
             <div class="content">
                 <div class="grid-2">
-                    <div class="visual-placeholder" style="height: 450px;">
-                        [ GLOBAL COMPETENCE INFOGRAPHIC ]
+                    <div style="text-align:center;">
+                        <img src="Globalcompetenceinfographic.png" alt="Global Competence Infographic" class="visual-asset" style="height: 450px;" onerror="this.src='https://placehold.co/400x450?text=Global+Competence+Infographic'">
                     </div>
                     <div>
                         <h3>Lecture Notes</h3>
