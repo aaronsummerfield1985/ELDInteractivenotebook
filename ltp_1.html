@@ -33,7 +33,7 @@
 
         /* --- PRINT CSS --- */
         @media print {
-            .ui-element, #export-btn, .nav-indicator, audio, .audio-placeholder {
+            .ui-element, #export-btn, .nav-indicator {
                 display: none !important;
             }
             body {
@@ -122,18 +122,38 @@
             margin-bottom: 24px;
             border-bottom: 2px solid #f3f4f6;
             padding-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
-        .slide-header h2 {
+        .slide-header-left h2 {
             color: var(--primary);
             font-size: 1.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .slide-header p {
+        .slide-header-left p {
             font-weight: 600;
             color: var(--text-muted);
+        }
+
+        .name-field {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--secondary);
+            min-width: 250px;
+            padding: 2px 8px;
+            outline: none;
+        }
+
+        .name-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
         }
 
         /* --- INPUT ELEMENTS --- */
@@ -172,21 +192,6 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-        }
-
-        .audio-placeholder {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .audio-icon {
-            font-size: 24px;
         }
 
         .mcq-option {
@@ -260,8 +265,14 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Section One, Lesson One</p>
-                <h2>Welcome to Listening Skills</h2>
+                <div class="slide-header-left">
+                    <p>Section One, Lesson One</p>
+                    <h2>Welcome to Listening Skills</h2>
+                </div>
+                <div class="slide-header-right">
+                    <span class="name-label">Student Name:</span>
+                    <div class="name-field response-box" contenteditable="true" data-id="student-name" data-placeholder="Write your name here..."></div>
+                </div>
             </div>
             <div class="content">
                 <p class="instruction">Objective: Build a shared understanding of why listening is an important skill and what global and local listening mean.</p>
@@ -281,23 +292,17 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson One</p>
-                <h2>Teach and Practice: Part I</h2>
+                <div class="slide-header-left">
+                    <p>Lesson One</p>
+                    <h2>Teach and Practice: Part I</h2>
+                </div>
             </div>
             <div class="content">
                 <div class="badge">LISTENING TASK</div>
                 <p>Listen to an article about the importance of listening skills. Take notes to be ready to discuss what you learned.</p>
                 
-                <div class="audio-placeholder ui-element">
-                    <span class="audio-icon">🎧</span>
-                    <div style="flex-grow:1">
-                        <div style="height:4px; background:#e2e8f0; border-radius:2px;"></div>
-                    </div>
-                    <span>0:00 / 2:15</span>
-                </div>
-
                 <h3>Notes:</h3>
-                <div class="response-box" contenteditable="true" data-id="s2-notes" data-placeholder="Type your notes here as you listen..." style="min-height: 250px;"></div>
+                <div class="response-box" contenteditable="true" data-id="s2-notes" data-placeholder="Type your notes here as you listen..." style="min-height: 300px;"></div>
             </div>
         </div>
 
@@ -305,8 +310,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson One</p>
-                <h2>Local vs Global Listening</h2>
+                <div class="slide-header-left">
+                    <p>Lesson One</p>
+                    <h2>Local vs Global Listening</h2>
+                </div>
             </div>
             <div class="content">
                 <div class="grid">
@@ -334,8 +341,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Section One, Lesson Two</p>
-                <h2>Preparing to Do Your Best</h2>
+                <div class="slide-header-left">
+                    <p>Section One, Lesson Two</p>
+                    <h2>Preparing to Do Your Best</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Being prepared is one way to ensure success. What works for you to feel calm, alert, and prepared?</p>
@@ -358,8 +367,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson Two</p>
-                <h2>Visual Listening Task</h2>
+                <div class="slide-header-left">
+                    <p>Lesson Two</p>
+                    <h2>Visual Listening Task</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Listen to the sentence and circle (click) the picture that matches what you hear.</p>
@@ -385,8 +396,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson Two</p>
-                <h2>Movie Summary: Passage 1</h2>
+                <div class="slide-header-left">
+                    <p>Lesson Two</p>
+                    <h2>Movie Summary: Passage 1</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Question 4: What year did the movie "The Princess Bride" come out?</p>
@@ -411,8 +424,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Section One, Lesson Three</p>
-                <h2>Global Listening Keywords</h2>
+                <div class="slide-header-left">
+                    <p>Section One, Lesson Three</p>
+                    <h2>Global Listening Keywords</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Identify and underline keywords that signal a "Global Listening" question.</p>
@@ -431,8 +446,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson Three</p>
-                <h2>Student Presentation: Meteor Crash</h2>
+                <div class="slide-header-left">
+                    <p>Lesson Three</p>
+                    <h2>Student Presentation: Meteor Crash</h2>
+                </div>
             </div>
             <div class="content">
                 <div class="badge">GLOBAL LISTENING</div>
@@ -460,8 +477,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson Four</p>
-                <h2>The Four Skills of Global Competence</h2>
+                <div class="slide-header-left">
+                    <p>Lesson Four</p>
+                    <h2>The Four Skills of Global Competence</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Listen to Elfin and Aya debate about global competencies. Which skill do they argue is most important?</p>
@@ -489,8 +508,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Lesson Five</p>
-                <h2>Teacher Mode: Create a Task</h2>
+                <div class="slide-header-left">
+                    <p>Lesson Five</p>
+                    <h2>Teacher Mode: Create a Task</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Use the conversation between Aaliyah and Martin to create four multiple-choice questions for a partner.</p>
@@ -516,8 +537,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Section One</p>
-                <h2>Speaking & Group Feedback</h2>
+                <div class="slide-header-left">
+                    <p>Section One</p>
+                    <h2>Speaking & Group Feedback</h2>
+                </div>
             </div>
             <div class="content">
                 <p>Take turns sharing your responses. Use the "Talking Chips" strategy to provide feedback to your group members.</p>
@@ -542,8 +565,10 @@
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header">
-                <p>Section One Wrap-up</p>
-                <h2>Lesson Reflection</h2>
+                <div class="slide-header-left">
+                    <p>Section One Wrap-up</p>
+                    <h2>Lesson Reflection</h2>
+                </div>
             </div>
             <div class="content">
                 <div class="card">
