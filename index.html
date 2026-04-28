@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Student Notebook - Writing to a Prompt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* CORE DESIGN PRINCIPLES: Middle School ELD Friendly */
+        :root {
+            --primary-blue: #005088;
+            --secondary-cream: #fffaf1;
+            --accent-yellow: #ffde59;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --response-box-bg: #ffffff;
+            --response-box-border: #cbd5e1;
+            --active-border: #3b82f6;
+        }
+
+        * { box-sizing: border-box; }
+        
+        body {
+            background-color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin: 0;
+            padding: 40px 0;
+            align-items: center;
+            font-family: 'Atkinson Hyperlegible', sans-serif;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background-color: var(--secondary-cream);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border-top: 15px solid var(--primary-blue);
+            flex-shrink: 0;
+            page-break-after: always; /* Ensure PDF separation */
+        }
+
+        /* Notebook Look */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background-color: #fca5a5;
+            z-index: 0;
+        }
+
+        .slide-container h1, h2, h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-blue);
+            margin: 0;
+            z-index: 1;
+        }
+
+        .slide-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        /* Response Box Component */
+        .response-box {
+            background: var(--response-box-bg);
+            border: 2px dashed var(--response-box-border);
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            height: 100%;
+            overflow-y: auto;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .response-box:focus {
+            border: 2px solid var(--active-border);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            color: var(--text-dark);
+        }
+
+        .response-box.user-typed {
+            color: var(--text-dark);
+            border-style: solid;
+        }
+
+        /* Typography & Utility */
+        p, li { font-size: 22px; line-height: 1.4; color: var(--text-dark); margin-bottom: 10px; }
+        .label { font-weight: 700; color: var(--primary-blue); text-transform: uppercase; font-size: 16px; letter-spacing: 1px; }
+        .step-indicator { background: var(--accent-yellow); padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 18px; margin-bottom: 10px; align-self: flex-start; z-index: 1; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; height: 100%; }
+
+        /* Tables */
+        .do-what-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .do-what-table th { background: var(--primary-blue); color: white; padding: 15px; text-align: left; border-radius: 8px 8px 0 0; font-size: 20px; }
+        .do-what-table td { vertical-align: top; padding: 0; }
+        .do-what-table .response-box { margin-top: 0; border-radius: 0 0 8px 8px; height: 120px; }
+
+        .outline-section { display: flex; flex-direction: column; height: 100%; }
+        .outline-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 8px 8px 0 0; font-weight: 600; font-size: 20px; }
+        .outline-section .response-box { margin-top: 0; border-radius: 0 0 8px 8px; }
+
+        .sentence-frame { background: #f1f5f9; padding: 10px 15px; border-left: 4px solid var(--accent-yellow); margin-bottom: 10px; font-style: italic; font-size: 18px; color: #475569; }
+
+        .image-wrapper { width: 100%; height: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--response-box-border); }
+        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Navigation & Export Helpers */
+        .nav-hint { position: fixed; bottom: 20px; background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 30px; font-size: 14px; pointer-events: none; z-index: 100; }
+        
+        .export-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        .export-btn:hover { transform: scale(1.05); background: #16a34a; }
+
+        /* PRINT STYLES */
+        @media print {
+            body { background: white; padding: 0; gap: 0; }
+            .nav-hint, .export-btn { display: none !important; }
+            .slide-container {
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+                border-top-width: 10px;
+            }
+            .response-box { border-style: solid !important; color: black !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="export-btn" onclick="window.print()">
+        <i class="fa-solid fa-file-pdf"></i> Export to PDF
+    </button>
+
+    <!-- Slide 1: Title Slide -->
+    <div class="slide-container">
+        <div class="content-area" style="justify-content: center; align-items: center; text-align: center;">
+            <div style="background: var(--accent-yellow); width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
+                <i class="fa-solid fa-book-open" style="font-size: 60px; color: var(--primary-blue);"></i>
+            </div>
+            <h1 style="font-size: 80px; margin-bottom: 10px;">Writing to a Prompt</h1>
+            <h2 style="font-weight: 400; font-size: 36px; color: var(--text-muted);">Interactive Student Notebook</h2>
+            <div style="margin-top: 50px; border-top: 2px solid var(--primary-blue); padding-top: 20px; width: 400px;">
+                <p class="label">Student Name:</p>
+                <div class="response-box" contenteditable="true" style="height: auto; min-height: 50px; text-align: center;">[Type your name here]</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: Prompt One Slide -->
+    <div class="slide-container">
+        <div class="step-indicator">Step 1: Read the Prompt</div>
+        <h2 class="slide-title"><i class="fa-solid fa-magnifying-glass"></i> Prompt One: The Discovery</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div style="background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid var(--response-box-border);">
+                    <p style="font-weight: 600; color: var(--primary-blue);">The Situation:</p>
+                    <p>You have just made an amazing discovery — an animal that people have never seen before! A famous magazine wants to publish your story.</p>
+                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 20px;">Your Task:</p>
+                    <p>Write a story of your discovery. Include details about how and where you found it, your interactions, and what you learned.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="flex: 1;">
+                        <p class="label">What is this asking me to do?</p>
+                        <div class="response-box" contenteditable="true">Click to type response...</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <p class="label">Who is the audience?</p>
+                        <div class="response-box" contenteditable="true">Click to type response...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Do/What Chart Slide -->
+    <div class="slide-container">
+        <div class="step-indicator">Step 2: Deconstruct</div>
+        <h2 class="slide-title"><i class="fa-solid fa-list-check"></i> Do / What Chart</h2>
+        <div class="content-area">
+            <p style="margin-bottom: 20px;">Identify the <strong>imperative verbs</strong> (commands) and the details needed for each.</p>
+            <table class="do-what-table">
+                <thead>
+                    <tr>
+                        <th width="40%">What do I need to DO?</th>
+                        <th width="60%">What DETAILS should I include?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="response-box" contenteditable="true">Write a story</div></td>
+                        <td><div class="response-box" contenteditable="true">How and where I found the animal.</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="response-box" contenteditable="true">[Type verb here]</div></td>
+                        <td><div class="response-box" contenteditable="true">[Type details here]</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="response-box" contenteditable="true">[Type verb here]</div></td>
+                        <td><div class="response-box" contenteditable="true">[Type details here]</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Slide 4: Outline Slide -->
+    <div class="slide-container">
+        <div class="step-indicator">Step 3: Create an Outline</div>
+        <h2 class="slide-title"><i class="fa-solid fa-sitemap"></i> Narrative Plan</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="outline-section">
+                    <div class="outline-header">Beginning</div>
+                    <div class="response-box" contenteditable="true">Characters: <br>Setting: <br><br>Plan:</div>
+                </div>
+                <div class="outline-section">
+                    <div class="outline-header">Middle</div>
+                    <div class="response-box" contenteditable="true">Problem: <br><br>Major Events:</div>
+                </div>
+                <div class="outline-section">
+                    <div class="outline-header">End</div>
+                    <div class="response-box" contenteditable="true">Resolution: <br><br>Ending Feeling:</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: Draft Slide -->
+    <div class="slide-container">
+        <div class="step-indicator">Step 4: Draft</div>
+        <h2 class="slide-title"><i class="fa-solid fa-feather-pointed"></i> Write Your Story</h2>
+        <div class="content-area">
+            <div class="grid-2" style="grid-template-columns: 1fr 2fr;">
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px;">
+                    <p class="label">Sentence Starters</p>
+                    <div class="sentence-frame">At the beginning, I was...</div>
+                    <div class="sentence-frame">Suddenly, I noticed...</div>
+                    <div class="sentence-frame">The animal looked like...</div>
+                    <div class="sentence-frame">Finally, I realized...</div>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <p class="label">My Draft</p>
+                    <div class="response-box" contenteditable="true" style="font-family: 'Atkinson Hyperlegible'; line-height: 1.6; font-size: 22px;">Start typing your story draft here...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: Reflection Slide -->
+    <div class="slide-container">
+        <div class="step-indicator">Step 5: Reflect</div>
+        <h2 class="slide-title"><i class="fa-solid fa-star-half-stroke"></i> Self-Reflection</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: white; border-radius: 12px; padding: 40px; text-align: center;">
+                    <p class="label">Confidence Scale</p>
+                    <p>How comfortable do you feel writing to a prompt?</p>
+                    <div style="margin: 20px 0;">
+                        <img src="http://googleusercontent.com/image_collection/image_retrieval/14296793018041819900" alt="Confidence Scale" style="width: 400px;">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <p>My Score (1-5):</p>
+                        <div class="response-box" contenteditable="true" style="width: 60px; height: 60px; padding: 10px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold;"></div>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="flex: 1;">
+                        <p class="label">What did I do well?</p>
+                        <div class="response-box" contenteditable="true">Type here...</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <p class="label">What was challenging?</p>
+                        <div class="response-box" contenteditable="true">Type here...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-hint">Scroll down for more slides • Click any box to type</div>
+
+    <script>
+        // Handle Placeholder Logic for ContentEditable
+        const boxes = document.querySelectorAll('.response-box');
+        
+        boxes.forEach(box => {
+            const placeholderText = box.innerText;
+            
+            box.addEventListener('focus', function() {
+                if (this.innerText === placeholderText || this.innerText.includes('Click to type') || this.innerText.includes('Type here')) {
+                    this.innerText = '';
+                    this.classList.add('user-typed');
+                }
+            });
+
+            box.addEventListener('blur', function() {
+                if (this.innerText.trim() === '') {
+                    this.innerText = placeholderText;
+                    this.classList.remove('user-typed');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
