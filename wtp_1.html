@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* CORE DESIGN PRINCIPLES: Middle School ELD Friendly */
         :root {
             --primary-blue: #005088;
             --secondary-cream: #fffaf1;
@@ -19,42 +18,44 @@
             --response-box-bg: #ffffff;
             --response-box-border: #cbd5e1;
             --active-border: #3b82f6;
+            --slide-width: 1280px;
+            --slide-height: 720px;
         }
 
         * { box-sizing: border-box; }
         
         body {
-            background-color: #e2e8f0;
+            background-color: #cbd5e0;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 60px;
             margin: 0;
-            padding: 40px 0;
+            padding: 80px 0;
             align-items: center;
             font-family: 'Atkinson Hyperlegible', sans-serif;
+            scroll-behavior: smooth;
         }
 
         .slide-container {
-            width: 1280px;
-            height: 720px;
+            width: var(--slide-width);
+            height: var(--slide-height);
             background-color: var(--secondary-cream);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            padding: 50px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            padding: 40px 60px;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
             border-top: 15px solid var(--primary-blue);
             flex-shrink: 0;
-            page-break-after: always; /* Ensure PDF separation */
+            page-break-after: always;
         }
 
-        /* Notebook Look */
         .slide-container::before {
             content: '';
             position: absolute;
-            left: 30px;
+            left: 45px;
             top: 0;
             bottom: 0;
             width: 1px;
@@ -62,116 +63,126 @@
             z-index: 0;
         }
 
-        .slide-container h1, h2, h3 {
-            font-family: 'Poppins', sans-serif;
-            color: var(--primary-blue);
-            margin: 0;
-            z-index: 1;
-        }
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; color: var(--primary-blue); margin: 0; z-index: 1; }
+        .slide-title { font-size: 32px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .content-area { flex-grow: 1; display: flex; flex-direction: column; z-index: 1; position: relative; }
 
-        .slide-title {
-            font-size: 42px;
-            font-weight: 700;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            z-index: 1;
-        }
-
-        /* Response Box Component */
         .response-box {
             background: var(--response-box-bg);
             border: 2px dashed var(--response-box-border);
             border-radius: 8px;
-            padding: 15px;
-            font-size: 20px;
-            color: var(--text-muted);
-            margin-top: 10px;
-            height: 100%;
-            overflow-y: auto;
+            padding: 12px;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin-top: 5px;
             transition: all 0.2s ease;
             outline: none;
+            min-height: 40px;
         }
 
         .response-box:focus {
             border: 2px solid var(--active-border);
-            background: #fff;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-            color: var(--text-dark);
+            background: #fff;
         }
 
-        .response-box.user-typed {
-            color: var(--text-dark);
-            border-style: solid;
+        .response-box[contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: var(--text-muted);
+            font-style: italic;
         }
 
-        /* Typography & Utility */
-        p, li { font-size: 22px; line-height: 1.4; color: var(--text-dark); margin-bottom: 10px; }
-        .label { font-weight: 700; color: var(--primary-blue); text-transform: uppercase; font-size: 16px; letter-spacing: 1px; }
-        .step-indicator { background: var(--accent-yellow); padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 18px; margin-bottom: 10px; align-self: flex-start; z-index: 1; }
-
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 100%; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; height: 100%; }
-
-        /* Tables */
-        .do-what-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .do-what-table th { background: var(--primary-blue); color: white; padding: 15px; text-align: left; border-radius: 8px 8px 0 0; font-size: 20px; }
-        .do-what-table td { vertical-align: top; padding: 0; }
-        .do-what-table .response-box { margin-top: 0; border-radius: 0 0 8px 8px; height: 120px; }
-
-        .outline-section { display: flex; flex-direction: column; height: 100%; }
-        .outline-header { background: var(--primary-blue); color: white; padding: 10px 20px; border-radius: 8px 8px 0 0; font-weight: 600; font-size: 20px; }
-        .outline-section .response-box { margin-top: 0; border-radius: 0 0 8px 8px; }
-
-        .sentence-frame { background: #f1f5f9; padding: 10px 15px; border-left: 4px solid var(--accent-yellow); margin-bottom: 10px; font-style: italic; font-size: 18px; color: #475569; }
-
-        .image-wrapper { width: 100%; height: 100%; border-radius: 12px; overflow: hidden; border: 1px solid var(--response-box-border); }
-        .image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Navigation & Export Helpers */
-        .nav-hint { position: fixed; bottom: 20px; background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 30px; font-size: 14px; pointer-events: none; z-index: 100; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         
-        .export-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #22c55e;
+        .lesson-tag {
+            background: var(--primary-blue);
             color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 4px 12px;
+            border-radius: 4px;
             font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-            transition: transform 0.2s;
+            font-size: 14px;
+            margin-bottom: 10px;
+            align-self: flex-start;
+            z-index: 1;
         }
-        .export-btn:hover { transform: scale(1.05); background: #16a34a; }
 
-        /* PRINT STYLES */
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--response-box-border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .do-what-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .do-what-table th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+        .do-what-table td {
+            border: 1px solid var(--response-box-border);
+            padding: 0;
+            vertical-align: top;
+        }
+        .do-what-table .response-box {
+            border: none;
+            border-radius: 0;
+            height: 60px;
+            width: 100%;
+            margin: 0;
+        }
+
+        .export-btn {
+            position: fixed; top: 20px; right: 20px;
+            background: #22c55e; color: white; border: none;
+            padding: 12px 24px; border-radius: 8px; font-weight: 700;
+            cursor: pointer; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .nav-status {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); background: rgba(0,0,0,0.8);
+            color: white; padding: 10px 20px; border-radius: 30px;
+            font-size: 14px; z-index: 1000; display: flex; gap: 20px;
+        }
+
+        .rubric-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .rubric-table th, .rubric-table td { border: 1px solid #cbd5e1; padding: 8px; vertical-align: top; }
+        .rubric-table th { background: #f1f5f9; color: var(--primary-blue); }
+        .score-4 { background: #fffbeb; }
+
+        .sticky-note {
+            background: #fef08a; padding: 15px; border-radius: 4px;
+            border-left: 5px solid #eab308; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            font-weight: 700; color: #854d0e; transform: rotate(-1deg);
+        }
+
+        .formula-step {
+            background: #eff6ff; border: 2px solid #3b82f6;
+            padding: 15px; border-radius: 12px; text-align: center; font-weight: 700;
+        }
+
+        .mentor-text-box {
+            background: white; border: 1px solid #ddd; padding: 30px;
+            border-radius: 8px; line-height: 1.6; font-size: 18px; height: 100%;
+        }
+
         @media print {
-            body { background: white; padding: 0; gap: 0; }
-            .nav-hint, .export-btn { display: none !important; }
+            body { padding: 0; background: white; }
+            .export-btn, .nav-status { display: none !important; }
             .slide-container {
-                box-shadow: none;
-                border-radius: 0;
-                margin: 0;
-                width: 100vw;
-                height: 100vh;
-                border-top-width: 10px;
+                box-shadow: none; border-radius: 0; margin: 0;
+                width: 100%; height: 100vh; border-top: 10px solid var(--primary-blue);
             }
-            .response-box { border-style: solid !important; color: black !important; }
         }
     </style>
 </head>
@@ -181,173 +192,786 @@
         <i class="fa-solid fa-file-pdf"></i> Export to PDF
     </button>
 
-    <!-- Slide 1: Title Slide -->
-    <div class="slide-container">
+    <div class="nav-status">
+        <span id="slide-indicator">Slide 1 of --</span>
+        <span style="opacity: 0.6">|</span>
+        <span><i class="fa-solid fa-cloud-arrow-up"></i> Autosaved</span>
+    </div>
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide-container" id="slide-1">
         <div class="content-area" style="justify-content: center; align-items: center; text-align: center;">
-            <div style="background: var(--accent-yellow); width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
-                <i class="fa-solid fa-book-open" style="font-size: 60px; color: var(--primary-blue);"></i>
+            <div style="background: var(--accent-yellow); width: 140px; height: 140px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 30px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+                <i class="fa-solid fa-feather-pointed" style="font-size: 70px; color: var(--primary-blue);"></i>
             </div>
-            <h1 style="font-size: 80px; margin-bottom: 10px;">Writing to a Prompt</h1>
-            <h2 style="font-weight: 400; font-size: 36px; color: var(--text-muted);">Interactive Student Notebook</h2>
-            <div style="margin-top: 50px; border-top: 2px solid var(--primary-blue); padding-top: 20px; width: 400px;">
-                <p class="label">Student Name:</p>
-                <div class="response-box" contenteditable="true" style="height: auto; min-height: 50px; text-align: center;">[Type your name here]</div>
+            <h1 style="font-size: 80px; line-height: 1;">Writing to a Prompt</h1>
+            <h2 style="font-weight: 400; font-size: 32px; color: var(--text-muted); margin-top: 10px;">Interactive Student Notebook</h2>
+            <div style="margin-top: 60px; border-top: 2px solid var(--primary-blue); padding-top: 20px; width: 500px;">
+                <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--primary-blue);">Student Name</p>
+                <div class="response-box" id="student-name" contenteditable="true" data-placeholder="[Click to type name]"></div>
             </div>
         </div>
     </div>
 
-    <!-- Slide 2: Prompt One Slide -->
-    <div class="slide-container">
-        <div class="step-indicator">Step 1: Read the Prompt</div>
-        <h2 class="slide-title"><i class="fa-solid fa-magnifying-glass"></i> Prompt One: The Discovery</h2>
+    <!-- SLIDE 2: LESSON 1 OPEN -->
+    <div class="slide-container" id="slide-2">
+        <div class="lesson-tag">Section One, Lesson One</div>
+        <h2 class="slide-title"><i class="fa-solid fa-door-open"></i> Open the Lesson</h2>
+        <div class="content-area">
+            <p style="font-size: 20px; margin-bottom: 30px;">Objective: Build a common understanding of the purpose of prompts and how they are used.</p>
+            <div class="grid-2">
+                <div class="info-card">
+                    <p><strong>1. Look at the logo on the front cover. Based on the images, what do you think you will gain from this unit?</strong></p>
+                    <div class="response-box" id="l1-open-1" contenteditable="true" style="height: 150px;"></div>
+                </div>
+                <div class="info-card">
+                    <p><strong>2. What feelings or memories come to mind when you see the title and logo?</strong></p>
+                    <div class="response-box" id="l1-open-2" contenteditable="true" style="height: 150px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: CODE YOUR READING -->
+    <div class="slide-container" id="slide-3">
+        <div class="lesson-tag">Lesson One: Strategy</div>
+        <h2 class="slide-title"><i class="fa-solid fa-code"></i> Reading Strategy: Code Your Reading</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card" style="border-top: 4px solid var(--primary-blue);">
+                    <h3 style="font-size: 1.1em; color: #166534;"><i class="fa-solid fa-check"></i> "I got it!"</h3>
+                    <p style="font-size: 14px; margin: 10px 0;">Ideas you already know or actions you already take.</p>
+                    <div class="response-box" id="l1-code-1" contenteditable="true" style="height: 350px;"></div>
+                </div>
+                <div class="info-card" style="border-top: 4px solid #16a34a;">
+                    <h3 style="font-size: 1.1em; color: #166534;"><i class="fa-solid fa-lightbulb"></i> "Oohhh!"</h3>
+                    <p style="font-size: 14px; margin: 10px 0;">New ideas that resonate. "I never thought of it that way!"</p>
+                    <div class="response-box" id="l1-code-2" contenteditable="true" style="height: 350px;"></div>
+                </div>
+                <div class="info-card" style="border-top: 4px solid #dc2626;">
+                    <h3 style="font-size: 1.1em; color: #991b1b;"><i class="fa-solid fa-question"></i> "Huh?"</h3>
+                    <p style="font-size: 14px; margin: 10px 0;">Questions that come up. "What does that mean?"</p>
+                    <div class="response-box" id="l1-code-3" contenteditable="true" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: WHY DO WE NEED THIS? -->
+    <div class="slide-container" id="slide-4">
+        <div class="lesson-tag">Lesson One: Background</div>
+        <h2 class="slide-title"><i class="fa-solid fa-circle-info"></i> Why do we need this unit?</h2>
+        <div class="content-area">
+            <div class="info-card" style="font-size: 20px; line-height: 1.6;">
+                <p>Writing to a prompt can feel daunting, especially in high-stakes settings like tests, scholarships, or job applications. Sometimes you have plenty of time, but other times you have <strong>on-demand</strong> tasks with limited time.</p>
+                <p style="margin-top: 15px; background: #fff7ed; padding: 10px; border-radius: 4px; border-left: 4px solid #f97316;">The task is clear: <strong>address the prompt.</strong> Don't get distracted by adding details that don't directly answer the points called out.</p>
+                <p style="margin-top: 15px;">Whether you are backing up an opinion, describing a game, or explaining science, the <strong>paragraph essay structure</strong> works every time.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: ACADEMIC FORMULA -->
+    <div class="slide-container" id="slide-5">
+        <div class="lesson-tag">Lesson One: The Formula</div>
+        <h2 class="slide-title"><i class="fa-solid fa-calculator"></i> Academic Writing Formula</h2>
+        <div class="content-area" style="justify-content: center;">
+            <div style="display: flex; flex-direction: column; gap: 30px; width: 60%; margin: 0 auto;">
+                <div class="formula-step">1. Introduce the topic</div>
+                <div class="formula-step" style="background: #dbeafe;">2. Develop the topic</div>
+                <div class="formula-step">3. Provide a conclusion / wrap up your response</div>
+            </div>
+            <p style="text-align: center; margin-top: 40px; font-size: 22px; font-style: italic;">This formula is your game plan for success!</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: CONFIDENCE STEPS 1-2 -->
+    <div class="slide-container" id="slide-6">
+        <div class="lesson-tag">Lesson One: Process</div>
+        <h2 class="slide-title"><i class="fa-solid fa-stairs"></i> Building confidence step by step (1 & 2)</h2>
         <div class="content-area">
             <div class="grid-2">
-                <div style="background: #ffffff; padding: 30px; border-radius: 12px; border: 1px solid var(--response-box-border);">
-                    <p style="font-weight: 600; color: var(--primary-blue);">The Situation:</p>
-                    <p>You have just made an amazing discovery — an animal that people have never seen before! A famous magazine wants to publish your story.</p>
-                    <p style="font-weight: 600; color: var(--primary-blue); margin-top: 20px;">Your Task:</p>
-                    <p>Write a story of your discovery. Include details about how and where you found it, your interactions, and what you learned.</p>
+                <div class="info-card">
+                    <h3 style="font-size: 1.2em; margin-bottom: 10px;">Step 1. Take stock of the situation</h3>
+                    <ul style="font-size: 16px; line-height: 1.8;">
+                        <li><strong>Purpose:</strong> Knowledge or organization?</li>
+                        <li><strong>At stake:</strong> Why is this important?</li>
+                        <li><strong>Tools:</strong> Rubrics or graphic organizers?</li>
+                        <li><strong>Audience:</strong> Vocabulary and tone?</li>
+                        <li><strong>Time:</strong> How many paragraphs?</li>
+                    </ul>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div style="flex: 1;">
-                        <p class="label">What is this asking me to do?</p>
-                        <div class="response-box" contenteditable="true">Click to type response...</div>
-                    </div>
-                    <div style="flex: 1;">
-                        <p class="label">Who is the audience?</p>
-                        <div class="response-box" contenteditable="true">Click to type response...</div>
+                <div class="info-card">
+                    <h3 style="font-size: 1.2em; margin-bottom: 10px;">Step 2. Deconstruct the prompt</h3>
+                    <p style="font-size: 16px;">Find out what you are being asked to do.</p>
+                    <div style="background: #f1f5f9; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                        <p style="font-weight: 700; color: #1d4ed8;"><i class="fa-solid fa-highlighter"></i> Highlight imperative verbs (commands).</p>
+                        <p style="margin-top: 10px;">Identify main instructions and read each sentence carefully.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Slide 3: Do/What Chart Slide -->
-    <div class="slide-container">
-        <div class="step-indicator">Step 2: Deconstruct</div>
-        <h2 class="slide-title"><i class="fa-solid fa-list-check"></i> Do / What Chart</h2>
+    <!-- SLIDE 7: CONFIDENCE STEPS 3-4 -->
+    <div class="slide-container" id="slide-7">
+        <div class="lesson-tag">Lesson One: Process</div>
+        <h2 class="slide-title"><i class="fa-solid fa-stairs"></i> Building confidence step by step (3 & 4)</h2>
         <div class="content-area">
-            <p style="margin-bottom: 20px;">Identify the <strong>imperative verbs</strong> (commands) and the details needed for each.</p>
+            <div class="grid-2">
+                <div class="info-card">
+                    <h3 style="font-size: 1.2em; margin-bottom: 10px;">Step 3. Create an outline</h3>
+                    <p style="font-size: 16px;">Plan your formula application: <strong>Introduce, Develop, Conclude.</strong></p>
+                    <p style="font-size: 14px; margin-top: 10px; color: var(--text-muted);"><i class="fa-solid fa-check-double"></i> Cross-check with the prompt and rubric to ensure every detail is included.</p>
+                </div>
+                <div class="info-card">
+                    <h3 style="font-size: 1.2em; margin-bottom: 10px;">Step 4. Write your essay</h3>
+                    <p style="font-size: 16px;">Follow your outline using full sentences.</p>
+                    <ul style="font-size: 14px; margin-top: 10px;">
+                        <li>Check your tone and transitions.</li>
+                        <li>Verify spelling and formatting.</li>
+                        <li>Stay focused on the question!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: LANGUAGE PATTERNS -->
+    <div class="slide-container" id="slide-8">
+        <div class="lesson-tag">Lesson One: Discussion</div>
+        <h2 class="slide-title"><i class="fa-solid fa-comments"></i> Language patterns to discuss codes</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card">
+                    <p class="label">Familiar</p>
+                    <p style="font-size: 14px; font-style: italic;">"The idea that ___ is familiar to me."</p>
+                    <p style="font-size: 14px; font-style: italic;">"When I have a prompt, one thing I already do is..."</p>
+                    <div class="response-box" id="pattern-familiar" contenteditable="true" style="height: 200px;"></div>
+                </div>
+                <div class="info-card">
+                    <p class="label">New Understanding</p>
+                    <p style="font-size: 14px; font-style: italic;">"Something that stood out to me was..."</p>
+                    <p style="font-size: 14px; font-style: italic;">"I hadn't thought about how..."</p>
+                    <div class="response-box" id="pattern-new" contenteditable="true" style="height: 200px;"></div>
+                </div>
+                <div class="info-card">
+                    <p class="label">Confusing</p>
+                    <p style="font-size: 14px; font-style: italic;">"___ was confusing because ___."</p>
+                    <p style="font-size: 14px; font-style: italic;">"One idea that threw me off was..."</p>
+                    <div class="response-box" id="pattern-confusing" contenteditable="true" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: TAKE IT TO WRITING -->
+    <div class="slide-container" id="slide-9">
+        <div class="lesson-tag">Lesson One: Application</div>
+        <h2 class="slide-title"><i class="fa-solid fa-pen-nib"></i> Take it to Writing</h2>
+        <div class="content-area">
+            <p><strong>Do three rounds of Talking Stick. Now write the idea that you think is most important. Use language that is least familiar to you.</strong></p>
+            <div class="response-box" id="l1-writing-task" contenteditable="true" style="height: 400px; margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: ELEMENTS OF NARRATIVE -->
+    <div class="slide-container" id="slide-10">
+        <div class="lesson-tag">Section One, Lesson Two</div>
+        <h2 class="slide-title"><i class="fa-solid fa-mountain"></i> Elements of Narrative</h2>
+        <div class="content-area">
+            <div style="position: relative; height: 300px; background: white; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
+                <svg viewBox="0 0 800 250" style="width: 100%; height: 100%;">
+                    <path d="M 50 200 L 350 180 L 550 40 L 750 200" fill="none" stroke="var(--primary-blue)" stroke-width="4" stroke-dasharray="8 4" />
+                    <circle cx="50" cy="200" r="10" fill="var(--accent-yellow)" stroke="var(--primary-blue)" />
+                    <circle cx="550" cy="40" r="10" fill="var(--accent-yellow)" stroke="var(--primary-blue)" />
+                    <circle cx="750" cy="200" r="10" fill="var(--accent-yellow)" stroke="var(--primary-blue)" />
+                    <text x="50" y="230" font-family="Poppins" font-weight="700">Beginning / Setting</text>
+                    <text x="350" y="160" font-family="Poppins" font-weight="700" text-anchor="middle">Rising Action</text>
+                    <text x="550" y="30" font-family="Poppins" font-weight="700" text-anchor="middle">CLIMAX</text>
+                    <text x="750" y="230" font-family="Poppins" font-weight="700" text-anchor="end">End / Resolution</text>
+                </svg>
+            </div>
+            <div class="grid-2">
+                <div class="info-card">
+                    <p style="font-size: 15px;"><strong>Beginning:</strong> Exposition. Introduce setting (time/place) and characters (people/animals). An event or problem sets the story in motion.</p>
+                </div>
+                <div class="info-card">
+                    <p style="font-size: 15px;"><strong>Middle/End:</strong> Rising action leads to the climax (most dramatic moment). The end resolves problems and completes the story.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: STORY SHARING -->
+    <div class="slide-container" id="slide-11">
+        <div class="lesson-tag">Lesson Two: Think, Pair, Share</div>
+        <h2 class="slide-title"><i class="fa-solid fa-bullhorn"></i> A Story You Love</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <p class="label">Story Title:</p>
+                    <div class="response-box" id="l2-title" contenteditable="true"></div>
+                    <p class="label">Characters & Setting:</p>
+                    <div class="response-box" id="l2-char-set" contenteditable="true" style="height: 100px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <p class="label">Beginning, Middle, & End:</p>
+                    <div class="response-box" id="l2-bme" contenteditable="true" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: PRE-WRITING REFLECTION -->
+    <div class="slide-container" id="slide-12">
+        <div class="lesson-tag">Lesson Two: Preparation</div>
+        <h2 class="slide-title"><i class="fa-solid fa-user-clock"></i> Pre-writing Reflection</h2>
+        <div class="content-area">
+            <div class="info-card" style="background: #eff6ff;">
+                <p><strong>The Situation:</strong> You get to class and find out you will be doing a writing test for the next two periods.</p>
+                <p style="margin-top: 15px;">Look back at "Building confidence step by step" on p. 3. Which steps will you complete before you even start to write? Why?</p>
+                <div class="response-box" id="l2-pre-reflect" contenteditable="true" style="height: 250px; margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 13: PROMPT ONE STOCK -->
+    <div class="slide-container" id="slide-13">
+        <div class="lesson-tag">Lesson Two: Prompt One</div>
+        <h2 class="slide-title"><i class="fa-solid fa-binoculars"></i> Read and Take Stock</h2>
+        <div class="content-area">
+            <div class="info-card" style="border-left: 6px solid var(--accent-yellow);">
+                <p style="font-weight: 700; color: var(--primary-blue);">PROMPT ONE:</p>
+                <p>You have just made an amazing new discovery — an animal that people have never seen before! The editor of a famous nature magazine wants to publish an article about it. Write a story of your discovery. Include details about how and where you found the animal, the interactions you had with them, and what happened after you discovered them. What did you realize or how did you change as a result of the encounter? Be sure to use language that makes your story come to life.</p>
+            </div>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div>
+                    <p class="label">Purpose & At Stake?</p>
+                    <div class="response-box" id="p1-stock-1" contenteditable="true" style="height: 100px;"></div>
+                </div>
+                <div>
+                    <p class="label">Audience & Tools?</p>
+                    <div class="response-box" id="p1-stock-2" contenteditable="true" style="height: 100px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 14: PROMPT ONE DO/WHAT -->
+    <div class="slide-container" id="slide-14">
+        <div class="lesson-tag">Lesson Two: Deconstruct</div>
+        <h2 class="slide-title"><i class="fa-solid fa-table"></i> Do / What Chart: Prompt One</h2>
+        <div class="content-area">
             <table class="do-what-table">
                 <thead>
-                    <tr>
-                        <th width="40%">What do I need to DO?</th>
-                        <th width="60%">What DETAILS should I include?</th>
-                    </tr>
+                    <tr><th width="40%">What do I need to DO?</th><th width="60%">What DETAILS should I include?</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><div class="response-box" contenteditable="true">Write a story</div></td>
-                        <td><div class="response-box" contenteditable="true">How and where I found the animal.</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="response-box" contenteditable="true">[Type verb here]</div></td>
-                        <td><div class="response-box" contenteditable="true">[Type details here]</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="response-box" contenteditable="true">[Type verb here]</div></td>
-                        <td><div class="response-box" contenteditable="true">[Type details here]</div></td>
-                    </tr>
+                    <tr><td><div class="response-box" id="p1-do-1" contenteditable="true">Write a story</div></td><td><div class="response-box" id="p1-what-1" contenteditable="true">About the discovery of a new animal.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-2" contenteditable="true">Include how</div></td><td><div class="response-box" id="p1-what-2" contenteditable="true">Details about how I found it.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-3" contenteditable="true">Include where</div></td><td><div class="response-box" id="p1-what-3" contenteditable="true">Details about where I found it.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-4" contenteditable="true">Describe interactions</div></td><td><div class="response-box" id="p1-what-4" contenteditable="true">The interactions I had with the animal.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-5" contenteditable="true">Explain result</div></td><td><div class="response-box" id="p1-what-5" contenteditable="true">What happened after I discovered it.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-6" contenteditable="true">Explain change</div></td><td><div class="response-box" id="p1-what-6" contenteditable="true">What I realized or how I changed.</div></td></tr>
+                    <tr><td><div class="response-box" id="p1-do-7" contenteditable="true">Use language</div></td><td><div class="response-box" id="p1-what-7" contenteditable="true">Language that makes the story come to life.</div></td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Slide 4: Outline Slide -->
-    <div class="slide-container">
-        <div class="step-indicator">Step 3: Create an Outline</div>
-        <h2 class="slide-title"><i class="fa-solid fa-sitemap"></i> Narrative Plan</h2>
+    <!-- SLIDE 15: PROMPT ONE OUTLINE -->
+    <div class="slide-container" id="slide-15">
+        <div class="lesson-tag">Lesson Two: Outline</div>
+        <h2 class="slide-title"><i class="fa-solid fa-sitemap"></i> Prompt One Outline</h2>
         <div class="content-area">
             <div class="grid-3">
-                <div class="outline-section">
-                    <div class="outline-header">Beginning</div>
-                    <div class="response-box" contenteditable="true">Characters: <br>Setting: <br><br>Plan:</div>
+                <div class="info-card">
+                    <p class="label">Beginning</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Introduce characters, setting, first action.</p>
+                    <div class="response-box" id="p1-outline-b" contenteditable="true" style="height: 350px;"></div>
                 </div>
-                <div class="outline-section">
-                    <div class="outline-header">Middle</div>
-                    <div class="response-box" contenteditable="true">Problem: <br><br>Major Events:</div>
+                <div class="info-card">
+                    <p class="label">Middle</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Rising action up to climax.</p>
+                    <div class="response-box" id="p1-outline-m" contenteditable="true" style="height: 350px;"></div>
                 </div>
-                <div class="outline-section">
-                    <div class="outline-header">End</div>
-                    <div class="response-box" contenteditable="true">Resolution: <br><br>Ending Feeling:</div>
+                <div class="info-card">
+                    <p class="label">End</p>
+                    <p style="font-size: 13px; color: var(--text-muted);">Resolution; wrap up.</p>
+                    <div class="response-box" id="p1-outline-e" contenteditable="true" style="height: 350px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Slide 5: Draft Slide -->
-    <div class="slide-container">
-        <div class="step-indicator">Step 4: Draft</div>
-        <h2 class="slide-title"><i class="fa-solid fa-feather-pointed"></i> Write Your Story</h2>
+    <!-- SLIDE 16: PROMPT TWO STOCK -->
+    <div class="slide-container" id="slide-16">
+        <div class="lesson-tag">Lesson Two: Prompt Two</div>
+        <h2 class="slide-title"><i class="fa-solid fa-mirror"></i> Read and Take Stock</h2>
         <div class="content-area">
-            <div class="grid-2" style="grid-template-columns: 1fr 2fr;">
-                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px;">
-                    <p class="label">Sentence Starters</p>
-                    <div class="sentence-frame">At the beginning, I was...</div>
-                    <div class="sentence-frame">Suddenly, I noticed...</div>
-                    <div class="sentence-frame">The animal looked like...</div>
-                    <div class="sentence-frame">Finally, I realized...</div>
+            <div class="info-card" style="border-left: 6px solid #a855f7;">
+                <p style="font-weight: 700; color: var(--primary-blue);">PROMPT TWO:</p>
+                <p>On a morning just like any other, you wake up and begin to get ready for school. While brushing your teeth, you look up and you don’t see yourself in the mirror. Write a short story about what happens next. Provide details about what may have led to this situation, introduce characters, and include a dialogue. Be sure to give your story a beginning, a middle, and an end.</p>
+            </div>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div>
+                    <p class="label">Purpose?</p>
+                    <div class="response-box" id="p2-stock-1" contenteditable="true" style="height: 100px;"></div>
                 </div>
-                <div style="display: flex; flex-direction: column;">
-                    <p class="label">My Draft</p>
-                    <div class="response-box" contenteditable="true" style="font-family: 'Atkinson Hyperlegible'; line-height: 1.6; font-size: 22px;">Start typing your story draft here...</div>
+                <div>
+                    <p class="label">Audience?</p>
+                    <div class="response-box" id="p2-stock-2" contenteditable="true" style="height: 100px;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Slide 6: Reflection Slide -->
-    <div class="slide-container">
-        <div class="step-indicator">Step 5: Reflect</div>
-        <h2 class="slide-title"><i class="fa-solid fa-star-half-stroke"></i> Self-Reflection</h2>
+    <!-- SLIDE 17: PROMPT TWO DO/WHAT -->
+    <div class="slide-container" id="slide-17">
+        <div class="lesson-tag">Lesson Two: Deconstruct</div>
+        <h2 class="slide-title"><i class="fa-solid fa-table"></i> Do / What Chart: Prompt Two</h2>
+        <div class="content-area">
+            <div class="grid-2" style="grid-template-columns: 2fr 1fr; height: 100%;">
+                <table class="do-what-table">
+                    <thead>
+                        <tr><th width="40%">What do I need to DO?</th><th width="60%">What DETAILS?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><div class="response-box" id="p2-do-1" contenteditable="true">Write a short story</div></td><td><div class="response-box" id="p2-what-1" contenteditable="true"></div></td></tr>
+                        <tr><td><div class="response-box" id="p2-do-2" contenteditable="true">Explain next</div></td><td><div class="response-box" id="p2-what-2" contenteditable="true"></div></td></tr>
+                        <tr><td><div class="response-box" id="p2-do-3" contenteditable="true">Provide details</div></td><td><div class="response-box" id="p2-what-3" contenteditable="true"></div></td></tr>
+                        <tr><td><div class="response-box" id="p2-do-4" contenteditable="true">Introduce characters</div></td><td><div class="response-box" id="p2-what-4" contenteditable="true"></div></td></tr>
+                        <tr><td><div class="response-box" id="p2-do-5" contenteditable="true">Include dialogue</div></td><td><div class="response-box" id="p2-what-5" contenteditable="true"></div></td></tr>
+                        <tr><td><div class="response-box" id="p2-do-6" contenteditable="true">Give structure</div></td><td><div class="response-box" id="p2-what-6" contenteditable="true">Beginning, middle, end.</div></td></tr>
+                    </tbody>
+                </table>
+                <div style="display: flex; align-items: center; justify-content: center;">
+                    <div class="sticky-note">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        The most common reason students score low is they don't address all parts called out in the prompt!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 18: PROMPT TWO OUTLINE -->
+    <div class="slide-container" id="slide-18">
+        <div class="lesson-tag">Lesson Two: Outline</div>
+        <h2 class="slide-title"><i class="fa-solid fa-sitemap"></i> Prompt Two Outline</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card">
+                    <p class="label">Beginning</p>
+                    <div class="response-box" id="p2-outline-b" contenteditable="true" style="height: 380px;"></div>
+                </div>
+                <div class="info-card">
+                    <p class="label">Middle</p>
+                    <div class="response-box" id="p2-outline-m" contenteditable="true" style="height: 380px;"></div>
+                </div>
+                <div class="info-card">
+                    <p class="label">End</p>
+                    <div class="response-box" id="p2-outline-e" contenteditable="true" style="height: 380px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 19: CONFIDENCE REFLECTION -->
+    <div class="slide-container" id="slide-19">
+        <div class="lesson-tag">Lesson Two: Reflection</div>
+        <h2 class="slide-title"><i class="fa-solid fa-star-half-stroke"></i> Confidence Reflection</h2>
         <div class="content-area">
             <div class="grid-2">
-                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: white; border-radius: 12px; padding: 40px; text-align: center;">
-                    <p class="label">Confidence Scale</p>
-                    <p>How comfortable do you feel writing to a prompt?</p>
-                    <div style="margin: 20px 0;">
-                        <img src="http://googleusercontent.com/image_collection/image_retrieval/14296793018041819900" alt="Confidence Scale" style="width: 400px;">
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <p>My Score (1-5):</p>
-                        <div class="response-box" contenteditable="true" style="width: 60px; height: 60px; padding: 10px; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold;"></div>
+                <div class="info-card" style="text-align: center;">
+                    <p><strong>How comfortable would you feel if you had to write this story now? (0-5)</strong></p>
+                    <div class="response-box" id="l2-conf-score" contenteditable="true" style="width: 80px; height: 80px; margin: 20px auto; font-size: 32px; font-weight: 700;"></div>
+                    <div style="display: flex; justify-content: space-between; font-weight: 700; color: var(--primary-blue);">
+                        <span>0 (Not Ready)</span>
+                        <span>5 (Expert)</span>
                     </div>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div style="flex: 1;">
-                        <p class="label">What did I do well?</p>
-                        <div class="response-box" contenteditable="true">Type here...</div>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div>
+                        <p class="label">Most Confident Part?</p>
+                        <div class="response-box" id="l2-conf-pos" contenteditable="true" style="height: 120px;"></div>
                     </div>
-                    <div style="flex: 1;">
-                        <p class="label">What was challenging?</p>
-                        <div class="response-box" contenteditable="true">Type here...</div>
+                    <div>
+                        <p class="label">Least Confident Part?</p>
+                        <div class="response-box" id="l2-conf-neg" contenteditable="true" style="height: 120px;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="nav-hint">Scroll down for more slides • Click any box to type</div>
+    <!-- SLIDE 20: MENTOR TEXT PART 1 -->
+    <div class="slide-container" id="slide-20">
+        <div class="lesson-tag">Section One, Lesson Three</div>
+        <h2 class="slide-title"><i class="fa-solid fa-book-open"></i> Mentor Text: Prompt One (Part 1)</h2>
+        <div class="content-area">
+            <div class="mentor-text-box">
+                <p>It was a calm, crisp evening in April. I was taking an evening hike, like I usually do whenever the weather is nice. Everyone in my community knows that hiking is my passion and I always try to drag a friend along with me. But on this day, the weather was chillier than normal and I had to go by myself. I had forgotten my beanie and it was getting dark, so I decided to cut it short. As I was heading down the hill, I heard a screeching sound echoing throughout the canyon. My heart stopped for a moment as I wondered what it could be.</p>
+                <p style="margin-top: 15px;">Just as the sun was about to set, I caught a glimpse of the most beautiful bird-like creature I've ever seen. Their large body was a shimmery white that looked like the snow on the mountain behind them. They had long, glistening feathers running down their back. They had a tail that was as long as a car and two strong hind legs with long claws. The animal's tail and legs were covered with silver and gold scales. Two striped, pointed ears popped up from the top of their head. Their face looked like a snow owl and as they turned their head, I saw a small beak poking out from their profile. There was an orange glow around their body as they reflected the sun setting behind them. They looked so majestic.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 21: MENTOR TEXT PART 2 -->
+    <div class="slide-container" id="slide-21">
+        <div class="lesson-tag">Lesson Three: Mentor Text</div>
+        <h2 class="slide-title"><i class="fa-solid fa-book-open"></i> Mentor Text: Prompt One (Part 2)</h2>
+        <div class="content-area">
+            <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                <div class="mentor-text-box" style="font-size: 16px;">
+                    <p>I took out my phone to take a picture. I was worried the creature would be able to hear me moving, but they continued to munch on the leaves around them. Suddenly, they let out the loud, hair-raising screech I had heard earlier. The animal finally heard me sneaking around the tree, trying to get a better glimpse. Our eyes locked! To my surprise, the creature slowly walked toward me with a smile-like expression on their face. I felt like they were greeting me and letting me know that I was safe. Once they were close enough, I reached out to touch the feathers that looked as soft as clouds. Right before I could touch them, they turned around and disappeared into the woods.</p>
+                    <p style="margin-top: 10px;">I ran home, so excited that I had seen such a magical being. I had been hiking around their home almost every day for the last two years. I believe they knew that I really loved their home and that I wouldn't do anything to harm them. I can only imagine what else might be living right under my nose. Maybe one day I'll find out.</p>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; border: 2px dashed #ccc; border-radius: 8px;">
+                    <p class="label">Animal Visualization</p>
+                    <i class="fa-solid fa-mobile-screen-button" style="font-size: 100px; color: #94a3b8; margin: 20px 0;"></i>
+                    <p style="font-size: 12px; color: var(--text-muted); text-align: center;">Illustration: Snow Owl-Wolf hybrid shimmering on phone screen.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 22: DESCRIBE FUNCTION -->
+    <div class="slide-container" id="slide-22">
+        <div class="lesson-tag">Lesson Three: Language</div>
+        <h2 class="slide-title"><i class="fa-solid fa-paintbrush"></i> Language Function: Describe</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card">
+                    <p class="label">Precise Adjectives</p>
+                    <ul style="font-size: 14px;">
+                        <li>scared → <strong>terrified</strong></li>
+                        <li>old → <strong>ancient</strong></li>
+                        <li>friendly → <strong>magnetic</strong></li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <p class="label">Multiple Adjectives</p>
+                    <ul style="font-size: 14px;">
+                        <li>bright, turquoise water</li>
+                        <li>loud, terrifying screech</li>
+                    </ul>
+                </div>
+                <div class="info-card">
+                    <p class="label">Figurative Language</p>
+                    <ul style="font-size: 14px;">
+                        <li>frozen with fear</li>
+                        <li>as old as the earth</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="label" style="margin-top: 20px;">Notes about language choices for your story:</p>
+            <div class="response-box" id="l3-notes-describe" contenteditable="true" style="height: 180px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 23: TIME & SEQUENCE -->
+    <div class="slide-container" id="slide-23">
+        <div class="lesson-tag">Lesson Three: Language</div>
+        <h2 class="slide-title"><i class="fa-solid fa-clock"></i> Time and Sequence</h2>
+        <div class="content-area">
+            <div class="grid-3" style="font-size: 13px;">
+                <div class="info-card">
+                    <p class="label">Establishing Time</p>
+                    <p>In the evening, ___</p>
+                    <p>Just as the sun was rising, ___</p>
+                    <p>Last month, ___</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Passage of Time</p>
+                    <p>Hours passed / Days later</p>
+                    <p>Eventually, ___</p>
+                    <p>Suddenly, ___</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Sequencing Events</p>
+                    <p>After ___ / Before ___</p>
+                    <p>Meanwhile / Initially</p>
+                    <p>Just right before, ___</p>
+                </div>
+            </div>
+            <p class="label" style="margin-top: 20px;">Notes for your story:</p>
+            <div class="response-box" id="l3-notes-time" contenteditable="true" style="height: 180px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 24: PAST TENSE VERBS -->
+    <div class="slide-container" id="slide-24">
+        <div class="lesson-tag">Lesson Three: Verbs</div>
+        <h2 class="slide-title"><i class="fa-solid fa-italic"></i> Past Tense Verb Forms</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card">
+                    <p class="label">Simple Past</p>
+                    <p style="font-size: 14px;">I <strong>walked</strong> into the darkness.</p>
+                    <p style="font-size: 14px;">The sky <strong>lit</strong> up.</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Past Progressive</p>
+                    <p style="font-size: 14px;">I <strong>was walking</strong> into the darkness.</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Past Perfect</p>
+                    <p style="font-size: 14px;">I <strong>had walked</strong> into the darkness.</p>
+                </div>
+            </div>
+            <p class="label" style="margin-top: 20px;">Notes on verb choices:</p>
+            <div class="response-box" id="l3-notes-verbs" contenteditable="true" style="height: 250px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 25: PRACTICE TELLING -->
+    <div class="slide-container" id="slide-25">
+        <div class="lesson-tag">Lesson Three: Application</div>
+        <h2 class="slide-title"><i class="fa-solid fa-comments"></i> Practice Telling Prompt Two</h2>
+        <div class="content-area">
+            <div class="info-card" style="background: #f8fafc;">
+                <ul style="font-size: 18px; line-height: 1.8;">
+                    <li>Review your Prompt Two outline (p. 9).</li>
+                    <li>Tell the story in your mind first. Notice your natural language.</li>
+                    <li>Pair up and practice telling your story to a partner.</li>
+                    <li>Help each other notice choices for setting, events, emotions, and time.</li>
+                    <li><strong>Give One, Get One:</strong> Share with a new partner.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 26: LESSON 3 CLOSE -->
+    <div class="slide-container" id="slide-26">
+        <div class="lesson-tag">Lesson Three: Reflection</div>
+        <h2 class="slide-title"><i class="fa-solid fa-circle-question"></i> Close the Lesson</h2>
+        <div class="content-area">
+            <div class="info-card" style="font-size: 20px; line-height: 1.6;">
+                <p>In this lesson, you didn’t write your story. We took time for you to just practice saying it.</p>
+                <p style="margin-top: 20px;"><strong>Why do you think we did it like this? In what ways can this support you?</strong></p>
+                <div class="response-box" id="l3-close-reflect" contenteditable="true" style="height: 250px; margin-top: 15px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 27: LESSON 4 OPEN -->
+    <div class="slide-container" id="slide-27">
+        <div class="lesson-tag">Section One, Lesson Four</div>
+        <h2 class="slide-title"><i class="fa-solid fa-clipboard-check"></i> Choose and Write</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="info-card">
+                    <p class="label">Confidence Review</p>
+                    <p>Review the article on p. 3. What are the steps to building confidence? Which ones have you completed?</p>
+                    <div class="response-box" id="l4-open-steps" contenteditable="true" style="height: 250px;"></div>
+                </div>
+                <div class="info-card">
+                    <p class="label">Reference Table</p>
+                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                        <tr style="border-bottom: 1px solid #ddd;"><td>Prompt One</td><td>p. 6</td><td>Do/What p. 6</td><td>Outline p. 7</td></tr>
+                        <tr><td>Prompt Two</td><td>p. 8</td><td>Do/What p. 8</td><td>Outline p. 9</td></tr>
+                    </table>
+                    <p style="margin-top: 15px; font-style: italic;">Remember to use language patterns on pgs. 11-12.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 28: CHOOSE PROMPT -->
+    <div class="slide-container" id="slide-28">
+        <div class="lesson-tag">Lesson Four: Choice</div>
+        <h2 class="slide-title"><i class="fa-solid fa-hand-pointer"></i> Select Your Prompt</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="info-card" style="display: flex; flex-direction: column; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 15px; font-size: 24px; cursor: pointer;">
+                        <input type="radio" name="prompt-choice" style="width: 25px; height: 25px;"> Prompt One: Discovery
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 15px; font-size: 24px; cursor: pointer;">
+                        <input type="radio" name="prompt-choice" style="width: 25px; height: 25px;"> Prompt Two: Mirror
+                    </label>
+                </div>
+                <div class="info-card" style="background: #fffbeb; border: 2px dashed #f59e0b;">
+                    <p class="label">My Affirmation:</p>
+                    <div class="response-box" id="l4-affirmation" contenteditable="true" style="height: 100px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 29: ESSAY DRAFT -->
+    <div class="slide-container" id="slide-29">
+        <div class="lesson-tag">Lesson Four: Draft</div>
+        <h2 class="slide-title"><i class="fa-solid fa-feather"></i> My Narrative Draft</h2>
+        <div class="content-area">
+            <p style="font-size: 14px; margin-bottom: 10px; color: var(--text-muted);">Follow your teacher’s directions to write your essay. Be sure to address all parts of the prompt.</p>
+            <div class="response-box" id="essay-draft" contenteditable="true" style="height: 480px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 30: RUBRIC CRITERIA -->
+    <div class="slide-container" id="slide-30">
+        <div class="lesson-tag">Section One, Lesson Five</div>
+        <h2 class="slide-title"><i class="fa-solid fa-magnifying-glass-chart"></i> Understanding Rubric Criteria</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="info-card" style="border-top: 4px solid var(--primary-blue);">
+                    <p class="label">Organization/Purpose</p>
+                    <p style="font-size: 14px;">Skillfully includes all prompt requirements: <strong>Beginning</strong> (Introduce characters/setting), <strong>Middle</strong> (Rising action), <strong>End</strong> (Resolution).</p>
+                </div>
+                <div class="info-card" style="border-top: 4px solid var(--primary-blue);">
+                    <p class="label">Development/Elaboration</p>
+                    <p style="font-size: 14px;">Events and experiences are clearly developed and seamlessly advance the plot.</p>
+                </div>
+                <div class="info-card" style="border-top: 4px solid var(--primary-blue);">
+                    <p class="label">Language</p>
+                    <p style="font-size: 14px;">Skillfully uses descriptive and figurative language and time phrases throughout the story.</p>
+                </div>
+                <div class="info-card" style="border-top: 4px solid var(--primary-blue);">
+                    <p class="label">Conventions</p>
+                    <p style="font-size: 14px;">Uses wide variety of complex, compound, and simple sentences. Effective command of punctuation, capitalization, and spelling.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 31: SENTENCE TYPES -->
+    <div class="slide-container" id="slide-31">
+        <div class="lesson-tag">Lesson Five: Language</div>
+        <h2 class="slide-title"><i class="fa-solid fa-list-ol"></i> Sentence Types</h2>
+        <div class="content-area">
+            <div class="grid-3">
+                <div class="info-card">
+                    <p class="label">Simple</p>
+                    <p style="font-size: 14px;">One independent clause (Subject + Predicate). Makes sense on its own.</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Compound</p>
+                    <p style="font-size: 14px;">Two independent clauses joined by comma/conjunction or semicolon.</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Complex</p>
+                    <p style="font-size: 14px;">One independent clause + at least one dependent clause.</p>
+                </div>
+            </div>
+            <p class="label" style="margin-top: 30px;">Reflect: Which sentence types did you use in your draft?</p>
+            <div class="response-box" id="l5-sentence-reflect" contenteditable="true" style="height: 150px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 32: FULL RUBRIC -->
+    <div class="slide-container" id="slide-32">
+        <div class="lesson-tag">Lesson Five: Rubric</div>
+        <h2 class="slide-title"><i class="fa-solid fa-award"></i> Scoring Rubric for Narrative Writing</h2>
+        <div class="content-area">
+            <table class="rubric-table">
+                <thead>
+                    <tr><th width="20%">Criteria</th><th class="score-4">4</th><th>3</th><th>2</th><th>1</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Organization/ Purpose</strong></td><td class="score-4">Skillfully includes all prompt requirements.</td><td>Includes most prompt requirements.</td><td>Includes some prompt requirements.</td><td>Includes at least one prompt requirement.</td></tr>
+                    <tr><td><strong>Development/ Elaboration</strong></td><td class="score-4">Events/experiences are clearly developed and advance plot.</td><td>Events/experiences are adequately developed.</td><td>Events are vague and plot hard to follow.</td><td>Events are underdeveloped; no clear plot.</td></tr>
+                    <tr><td><strong>Language</strong></td><td class="score-4">Skillfully uses descriptive language and time phrases.</td><td>Uses descriptive language in most parts.</td><td>Uses descriptive language in a couple parts.</td><td>Little to no descriptive language or time phrases.</td></tr>
+                    <tr><td><strong>Conventions</strong></td><td class="score-4">Wide variety of complex/compound/simple. Effective command.</td><td>Some variety. Adequate command of punctuation/spelling.</td><td>Little variety. Some command of punctuation/spelling.</td><td>No variety. Weak command of conventions.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SLIDE 33: PEER REVIEW -->
+    <div class="slide-container" id="slide-33">
+        <div class="lesson-tag">Lesson Five: Peer Process</div>
+        <h2 class="slide-title"><i class="fa-solid fa-users-viewfinder"></i> Peer Review Process</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="info-card">
+                    <p><strong>The Task:</strong> Read your narrative to your partner. Explain your scores. Exchange notebooks.</p>
+                    <p style="margin-top: 10px;"><strong>Reviewer Task:</strong> Reread partner's story. Highlight evidence of the score. Write feedback.</p>
+                </div>
+                <div class="info-card">
+                    <p class="label">Feedback by:</p>
+                    <div class="response-box" id="reviewer-name" contenteditable="true"></div>
+                    <p class="label" style="margin-top: 10px;">Partner Feedback:</p>
+                    <div class="response-box" id="peer-feedback-box" contenteditable="true" style="height: 180px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 34: REVISING -->
+    <div class="slide-container" id="slide-34">
+        <div class="lesson-tag">Lesson Five: Revision</div>
+        <h2 class="slide-title"><i class="fa-solid fa-rotate-right"></i> Practice Revising</h2>
+        <div class="content-area">
+            <div class="grid-2">
+                <div class="info-card">
+                    <p class="label">Revision Checklist</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                        <label><input type="checkbox"> Change details of events</label>
+                        <label><input type="checkbox"> Change the mood</label>
+                        <label><input type="checkbox"> Try out different language</label>
+                        <label><input type="checkbox"> Play with sentence structure</label>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <p class="label">Revision Notes</p>
+                    <div class="response-box" id="revision-notes" contenteditable="true" style="height: 150px;"></div>
+                </div>
+            </div>
+            <p class="label" style="margin-top: 20px;">My Revised Paragraph:</p>
+            <div class="response-box" id="revised-paragraph" contenteditable="true" style="height: 200px;"></div>
+        </div>
+    </div>
+
+    <!-- SLIDE 35: FINAL REFLECTION -->
+    <div class="slide-container" id="slide-35">
+        <div class="lesson-tag">Lesson Five: Conclusion</div>
+        <h2 class="slide-title"><i class="fa-solid fa-flag-checkered"></i> Close the Lesson</h2>
+        <div class="content-area">
+            <div class="info-card" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <p style="font-size: 24px; text-align: center; font-weight: 700;">Write a skill you are taking with you to use in other tasks.</p>
+                <div class="response-box" id="final-skill-reflect" contenteditable="true" style="height: 200px; margin-top: 30px; font-size: 24px;"></div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Handle Placeholder Logic for ContentEditable
-        const boxes = document.querySelectorAll('.response-box');
-        
-        boxes.forEach(box => {
-            const placeholderText = box.innerText;
-            
-            box.addEventListener('focus', function() {
-                if (this.innerText === placeholderText || this.innerText.includes('Click to type') || this.innerText.includes('Type here')) {
-                    this.innerText = '';
-                    this.classList.add('user-typed');
+        // NAVIGATION TRACKER & DYNAMIC COUNTER
+        const slides = document.querySelectorAll('.slide-container');
+        const indicator = document.getElementById('slide-indicator');
+        const totalSlides = slides.length;
+
+        function updateSlideIndicator() {
+            let current = 1;
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                if (rect.top < window.innerHeight / 2 && rect.bottom > window.innerHeight / 2) {
+                    current = index + 1;
                 }
             });
+            indicator.innerText = `Slide ${current} of ${totalSlides}`;
+        }
 
-            box.addEventListener('blur', function() {
-                if (this.innerText.trim() === '') {
-                    this.innerText = placeholderText;
-                    this.classList.remove('user-typed');
-                }
+        window.addEventListener('scroll', updateSlideIndicator);
+        window.addEventListener('load', () => {
+            updateSlideIndicator();
+            loadAutoSave();
+        });
+
+        // AUTOSAVE LOGIC
+        const interactiveElements = document.querySelectorAll('.response-box');
+
+        function loadAutoSave() {
+            interactiveElements.forEach(el => {
+                const savedValue = localStorage.getItem('wtp_workbook_final_' + el.id);
+                if (savedValue) el.innerText = savedValue;
+            });
+        }
+
+        interactiveElements.forEach(el => {
+            el.addEventListener('input', () => {
+                if (el.id) localStorage.setItem('wtp_workbook_final_' + el.id, el.innerText);
             });
         });
     </script>
