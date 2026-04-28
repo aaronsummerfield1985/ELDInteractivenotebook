@@ -174,8 +174,17 @@
         }
         
         .image-selection { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-        .image-item { border: 3px solid #eee; border-radius: 8px; padding: 5px; cursor: pointer; text-align: center; }
-        .image-item.selected { border-color: var(--primary); background: #eff6ff; }
+        .image-item { border: 3px solid #eee; border-radius: 8px; padding: 10px; cursor: pointer; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        .image-item.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+
+        .visual-reference {
+            display: block;
+            margin: 0 auto 15px auto;
+            max-height: 200px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
     </style>
 </head>
 <body>
@@ -262,25 +271,26 @@
             </div>
         </div>
 
-        <!-- SLIDE 5: VISUAL TASK -->
+        <!-- SLIDE 5: VISUAL TASK UPDATED -->
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header"><p>Lesson Two</p><h2>Visual Listening Task</h2></div>
             <div class="content">
                 <div class="badge">LOCAL LISTENING</div>
-                <p>Circle (click) the picture that matches the sentence you heard.</p>
-                <p><strong>Task 1:</strong></p>
+                <p>Look at the image below and circle (click) the letter that matches the sentence you heard.</p>
+                
+                <!-- Updated Image Reference -->
+                <img src="fishbowls.png" alt="Fishbowls Reference" class="visual-reference" onerror="this.style.display='none';">
+                
+                <p><strong>Task 1: Select the correct fishbowl</strong></p>
                 <div class="image-selection">
                     <div class="image-item" onclick="toggleSelect(this, 't1')" data-id="t1-a">A</div>
                     <div class="image-item" onclick="toggleSelect(this, 't1')" data-id="t1-b">B</div>
                     <div class="image-item" onclick="toggleSelect(this, 't1')" data-id="t1-c">C</div>
                     <div class="image-item" onclick="toggleSelect(this, 't1')" data-id="t1-d">D</div>
                 </div>
-                <p style="margin-top:15px;"><strong>Task 2 & 3:</strong></p>
-                <div class="grid-2">
-                    <div class="response-box" contenteditable="true" data-id="t2-notes" data-placeholder="Notes for Task 2..."></div>
-                    <div class="response-box" contenteditable="true" data-id="t3-notes" data-placeholder="Notes for Task 3..."></div>
-                </div>
+                <p style="margin-top:15px;"><strong>Notes:</strong></p>
+                <div class="response-box" contenteditable="true" data-id="t1-notes" data-placeholder="Record any details you heard about the fishbowls..."></div>
             </div>
         </div>
 
@@ -304,7 +314,7 @@
             </div>
         </div>
 
-        <!-- SLIDE 7: KEYWORDS (REQUESTED) -->
+        <!-- SLIDE 7: KEYWORDS -->
         <div class="slide">
             <div class="slide-accent"></div>
             <div class="slide-header"><p>Lesson Three</p><h2>Global Listening Keywords</h2></div>
@@ -507,11 +517,11 @@
                 const id = item.getAttribute('data-id');
                 state[id] = item.classList.contains('selected');
             });
-            localStorage.setItem('eld_notebook_v3', JSON.stringify(state));
+            localStorage.setItem('eld_notebook_v4', JSON.stringify(state));
         }
 
         function loadState() {
-            const saved = localStorage.getItem('eld_notebook_v3');
+            const saved = localStorage.getItem('eld_notebook_v4');
             if (!saved) return;
             const state = JSON.parse(saved);
             Object.keys(state).forEach(id => {
